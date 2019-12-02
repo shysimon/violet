@@ -1,10 +1,11 @@
 from flask import Flask, jsonify, session
 from app.web.violet_thumbs_functions import Thumbs
+from . import web
 
-app = Flask(__name__)
+# app = Flask(__name__)
 
 
-@app.route('/v1/thumbs/like', methods=['POST'])
+@web.route('/v1/thumbs/like', methods=['POST'])
 def like():
     user_id = session.get('user_id')
     item_type = None
@@ -39,7 +40,7 @@ def like():
     return Thumbs.like(user_id, item_type, item_id)
 
 
-@app.route('/v1/thumbs/dislike', methods=['POST'])
+@web.route('/v1/thumbs/dislike', methods=['POST'])
 def dislike():
     user_id = session.get('user_id')
     item_type = None
@@ -74,5 +75,5 @@ def dislike():
     return Thumbs.dislike(user_id, item_type, item_id)
 
 
-if __name__ == '__main__':
-    app.run()
+# if __name__ == '__main__':
+#     app.run()

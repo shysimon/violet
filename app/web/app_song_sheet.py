@@ -1,12 +1,12 @@
 from flask import Flask, request, jsonify, session
 from flask_login import login_required
+from . import web
 
 from app.web.violet_songsheet_functions import SongSheet, Song
 
-app = Flask(__name__)
+# app = Flask(__name__)
 
-
-# @app.route('/')
+# @web.route('/')
 # def hello_world():
 #     return 'Hello World!'
 
@@ -52,7 +52,7 @@ app = Flask(__name__)
 
 # 读取所有歌单信息
 # 无参数
-@app.route('/v1/sheet/all_sheets')
+@web.route('/v1/sheet/all_sheets')
 def all_sheets():
     user_id = session.get("user_id")
     if user_id is None:
@@ -62,7 +62,7 @@ def all_sheets():
 
 # 搜索属于某user的歌单信息
 # 需要登录
-@app.route('/v1/sheet/sheets_by_owner', methods=['GET', 'POST'])
+@web.route('/v1/sheet/sheets_by_owner', methods=['GET', 'POST'])
 @login_required
 def sheets_by_owner():
     user_id = session.get("user_id")
@@ -71,7 +71,7 @@ def sheets_by_owner():
 
 # 通过歌单名词模糊搜索歌单
 # 参数'name':歌单模糊查询词，不需要%通配符
-@app.route('/v1/sheet/sheets_by_name', methods=['GET', 'POST'])
+@web.route('/v1/sheet/sheets_by_name', methods=['GET', 'POST'])
 def sheets_by_name():
     user_id = session.get("user_id")
     if user_id is None:
@@ -88,7 +88,7 @@ def sheets_by_name():
 
 # 搜索某user关注的所有歌单（非所有者）
 # 需要登录
-@app.route('/v1/sheet/sheets_by_user', methods=['GET', 'POST'])
+@web.route('/v1/sheet/sheets_by_user', methods=['GET', 'POST'])
 @login_required
 def sheets_by_user():
     user_id = session.get("user_id")
@@ -100,7 +100,7 @@ def sheets_by_user():
 # 需要登录
 # 'file':专辑图片，（可选项）
 @login_required
-@app.route('/v1/sheet/create_sheet', methods=['GET', 'POST'])
+@web.route('/v1/sheet/create_sheet', methods=['GET', 'POST'])
 def create_sheet():
     sheet_name = None
     user_id = session.get("user_id")
@@ -124,7 +124,7 @@ def create_sheet():
 # 需要登录
 # 注意会删除 歌曲-歌单 表中信息，会删除对应点赞、评论信息，会删除 用户-歌单 表中信息
 # 若owner不符合，不会删除
-@app.route('/v1/sheet/delete_sheet', methods=['GET', 'POST'])
+@web.route('/v1/sheet/delete_sheet', methods=['GET', 'POST'])
 @login_required
 def delete_sheet():
     sheet_id = None
@@ -145,7 +145,7 @@ def delete_sheet():
 # 参数'sheet_id':歌单id
 # 'song_id':歌曲id
 # 需要登录
-@app.route('/v1/sheet/sheet_add_song', methods=['GET', 'POST'])
+@web.route('/v1/sheet/sheet_add_song', methods=['GET', 'POST'])
 @login_required
 def sheet_add_song():
     user_id = session.get("user_id")
@@ -175,7 +175,7 @@ def sheet_add_song():
 # 'song_id':歌曲id
 # 若个单中没有该歌曲，也不会报错
 # 需要登录
-@app.route('/v1/sheet/sheet_delete_song', methods=['GET', 'POST'])
+@web.route('/v1/sheet/sheet_delete_song', methods=['GET', 'POST'])
 @login_required
 def sheet_delete_song():
     user_id = session.get("user_id")
@@ -202,7 +202,7 @@ def sheet_delete_song():
 
 # 读取所有歌曲信息
 # 无参数
-@app.route('/v1/song/all_songs')
+@web.route('/v1/song/all_songs')
 def all_songs():
     user_id = session.get("user_id")
     if user_id is None:
@@ -212,7 +212,7 @@ def all_songs():
 
 # 通过歌手查询歌曲
 # 参数'singer_id':歌手主键
-@app.route('/v1/song/songs_by_singer')
+@web.route('/v1/song/songs_by_singer')
 def songs_by_singer():
     user_id = session.get("user_id")
     if user_id is None:
@@ -229,7 +229,7 @@ def songs_by_singer():
 
 # 通过歌单查询歌曲
 # 参数'sheet_id':歌单主键
-@app.route('/v1/song/songs_by_sheet')
+@web.route('/v1/song/songs_by_sheet')
 def songs_by_sheet():
     user_id = session.get("user_id")
     if user_id is None:
@@ -244,5 +244,5 @@ def songs_by_sheet():
     return Song.songs_to_jsonify(user_id, Song.query_by_sheet(sheet_id))
 
 
-if __name__ == '__main__':
-    app.run()
+# if __name__ == '__main__':
+#     app.run()
