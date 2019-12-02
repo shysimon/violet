@@ -4,17 +4,17 @@ from app.web.violet_post_function import Post
 app = Flask(__name__)
 
 
-@app.route('/')
-def hello_world():
-    return 'Hello World!'
+# @app.route('/')
+# def hello_world():
+#     return 'Hello World!'
 
 
-@app.route('/load_group', methods=['POST', 'GET'])
+@app.route('/v1/group/load_group', methods=['POST', 'GET'])
 def load_group():
     return Group.load_group()
 
 
-@app.route('/search_group', methods=['POST', 'GET'])
+@app.route('/v1/group/search_group', methods=['POST', 'GET'])
 def search_group():
     user_id = None
     keyword = None
@@ -40,7 +40,7 @@ def search_group():
     return Group.search_group(keyword)
 
 
-@app.route('/add_group', methods=['POST', 'GET'])
+@app.route('/v1/group/add_group', methods=['POST', 'GET'])
 def add_group():
     user_id = None
     group_name = None
@@ -80,7 +80,7 @@ def add_group():
     return Group.add_group(user_id, group_name, info, thumbs_up_num=thumbs_up_num, follow_num=follow_num)
 
 
-@app.route('/delete_group', methods=['POST', 'GET'])
+@app.route('/v1/group/delete_group', methods=['POST', 'GET'])
 def delete_group():
     user_id = None
     group_id = None
@@ -106,7 +106,7 @@ def delete_group():
     return Group.delete_group(group_id)
 
 
-@app.route('/invite_friend', methods=['POST', 'GET'])
+@app.route('/v1/group/invite_friend', methods=['POST', 'GET'])
 def invite_friend():
     user_id = None
     friend_id = None
@@ -139,7 +139,7 @@ def invite_friend():
     return Group.invite_user(friend_id, group_id)
 
 
-@app.route('/load_post', methods=['POST', 'GET'])
+@app.route('/v1/post/load_post', methods=['POST', 'GET'])
 def load_post():
     user_id = None
     group_id = None
@@ -164,7 +164,7 @@ def load_post():
     return Post.load_post(group_id, user_id)
 
 
-@app.route('/add_post', methods=['POST', 'GET'])
+@app.route('/v1/post/add_post', methods=['POST', 'GET'])
 def add_post():
     user_id = None
     group_id = None
@@ -208,7 +208,7 @@ def add_post():
     return Post.add_post(group_id, user_id, post_title, content, thumbs_up_num)
 
 
-@app.route('/delete_post', methods=['POST', 'GET'])
+@app.route('/v1/post/delete_post', methods=['POST', 'GET'])
 def delete_post():
     user_id = None
     post_id = None
@@ -233,7 +233,7 @@ def delete_post():
     return Post.delete_post(post_id)
 
 
-@app.route('/modify_post', methods=['POST', 'GET'])
+@app.route('/v1/post/modify_post', methods=['POST', 'GET'])
 def modify_post():
     user_id = None
     post_id = None
@@ -266,7 +266,7 @@ def modify_post():
     return Post.modify_post(post_id, new_content)
 
 
-@app.route('/search_post', methods=['POST', 'GET'])
+@app.route('/v1/post/search_post', methods=['POST', 'GET'])
 def search_post():
     user_id = None
     keyword = None

@@ -4,7 +4,7 @@ from app.web.violet_comment_functions import Comment
 app = Flask(__name__)
 
 
-@app.route('/comment/load_comment', methods=['POST'])
+@app.route('/v1/comment/load_comment', methods=['POST'])
 def load_comment():
     user_id = session.get('user_id')
     item_type = None
@@ -61,7 +61,7 @@ def load_comment():
     return Comment.comments_to_jsonify(Comment.load_comment(user_id, item_type, item_id))
 
 
-@app.route('/comment/add_comment', methods=['POST'])
+@app.route('/v1/comment/add_comment', methods=['POST'])
 def add_comment():
     user_id = session.get('user_id')
     item_type = None
@@ -102,7 +102,7 @@ def add_comment():
     return Comment.add_comment(user_id, item_type, item_id, content)
 
 
-@app.route('/comment/delete_comment', methods=['POST'])
+@app.route('/v1/comment/delete_comment', methods=['POST'])
 def delete_comment():
     user_id = session.get('user_id')
     comment_id = None
@@ -129,7 +129,7 @@ def delete_comment():
     return Comment.delete_comment(user_id, comment_id)
 
 
-@app.route('/comment/modify_comment', methods=['POST'])
+@app.route('/v1/comment/modify_comment', methods=['POST'])
 def modify_comment():
     user_id = session.get('user_id')
     comment_id = None

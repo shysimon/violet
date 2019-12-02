@@ -9,7 +9,7 @@ from app.model.user import User
 from . import web
 
 
-@web.route('/register', methods=['POST'])
+@web.route('/v1/auth/register', methods=['POST'])
 def register():
     form = RegisterForm(request.args)
     if form.validate():
@@ -49,7 +49,7 @@ def register():
         })
 
 
-@web.route('/login', methods=['POST'])
+@web.route('/v1/auth/login', methods=['POST'])
 def login():
     form = LoginForm(request.args)
     if form.validate():
@@ -92,7 +92,7 @@ def login():
         })
 
 
-@web.route('/reset/password', methods=['POST'])
+@web.route('/v1/auth/reset/password', methods=['POST'])
 def forget_password_request():
     form = EmailForm(request.args)
     if form.validate():
@@ -115,7 +115,7 @@ def forget_password_request():
         })
 
 
-@web.route('/reset/password/<token>', methods=['POST'])
+@web.route('/v1/auth/reset/password/<token>', methods=['POST'])
 def forget_password(token):
     form = ResetPasswordForm(request.args)
     if form.validate():
@@ -131,7 +131,7 @@ def forget_password(token):
             })
 
 
-@web.route('/logout', methods=['POST', 'GET'])
+@web.route('/v1/auth/logout', methods=['POST', 'GET'])
 @login_required
 def logout():
     logout_user()

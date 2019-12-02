@@ -13,7 +13,7 @@ from app.web import web
 
 
 # 查找用户
-@web.route('/user/search', methods=['POST'])
+@web.route('/v1/user/search', methods=['POST'])
 @login_required
 def searchUser():
     db = pymysql.connect(host=current_app.config['HOST'], user=current_app.config['USER'],
@@ -41,7 +41,7 @@ def searchUser():
 
 
 # 查找自己关注的用户
-@web.route('/user/searchfollow', methods=['POST'])
+@web.route('/v1/user/searchfollow', methods=['POST'])
 @login_required
 def searchfollow():
     db = pymysql.connect(host=current_app.config['HOST'], user=current_app.config['USER'],
@@ -76,7 +76,7 @@ def searchfollow():
 
 
 # 关注
-@web.route('/user/follow', methods=['POST'])
+@web.route('/v1/user/follow', methods=['POST'])
 @login_required
 def follow():
     db = pymysql.connect(host=current_app.config['HOST'], user=current_app.config['USER'],
@@ -109,7 +109,7 @@ def follow():
 
 
 # 取消关注
-@web.route("/user/unfollow", methods=['POST'])
+@web.route("/v1/user/unfollow", methods=['POST'])
 @login_required
 def unfollow():
     db = pymysql.connect(host=current_app.config['HOST'], user=current_app.config['USER'],
@@ -143,7 +143,7 @@ def unfollow():
 
 
 # 修改用户个人信息
-@web.route("/user/modify", methods=['POST'])
+@web.route("/v1/user/modify", methods=['POST'])
 @login_required
 def modifyUser():
     uid = session.get("user_id")
@@ -203,7 +203,7 @@ def modifyUser():
 
 # 用户生日提醒/除了用户自己，还返回了关注该用户的用户数组，和该用户的生日
 # 这里的估计还有多少天到用户生日是粗略的，不顾问题不大
-@web.route("/reminder/birth", methods=['POST'])
+@web.route("/v1/reminder/birth", methods=['POST'])
 @login_required
 def birthReminder():
     db = pymysql.connect(host=current_app.config['HOST'], user=current_app.config['USER'],
@@ -257,7 +257,7 @@ def birthReminder():
 
 
 # 修改用户密码
-@web.route("/user/changepwd", methods=['POST'])
+@web.route("/v1/user/changepwd", methods=['POST'])
 @login_required
 def changePassword():
     uid = session.get("user_id")

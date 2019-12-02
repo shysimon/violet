@@ -4,7 +4,7 @@ from app.web.violet_thumbs_functions import Thumbs
 app = Flask(__name__)
 
 
-@app.route('/thumbs/like', methods=['POST'])
+@app.route('/v1/thumbs/like', methods=['POST'])
 def like():
     user_id = session.get('user_id')
     item_type = None
@@ -39,7 +39,7 @@ def like():
     return Thumbs.like(user_id, item_type, item_id)
 
 
-@app.route('/thumbs/dislike', methods=['POST'])
+@app.route('/v1/thumbs/dislike', methods=['POST'])
 def dislike():
     user_id = session.get('user_id')
     item_type = None
