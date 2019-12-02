@@ -18,7 +18,7 @@ app = create_app()
 # data = cursor.fetchone()
 #
 # print("Database version : %s " % data)
-#
+# 2
 # # 关闭数据库连接
 # db.close()
 
