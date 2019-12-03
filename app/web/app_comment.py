@@ -4,6 +4,7 @@ from . import web
 
 # app = Flask(__name__)
 
+
 @web.route('/v1/comment/load_comment', methods=['POST'])
 def load_comment():
     user_id = session.get('user_id')
