@@ -1,10 +1,11 @@
 from flask import Flask, jsonify, session
 from app.web.user_recommend_system import UserRecommendSystem, user_to_jsonify
+from . import web
 
-app = Flask(__name__)
+# app = Flask(__name__)
 
 
-@app.route('/recommend/user', methods=['POST'])
+@web.route('/v1/recommend/user', methods=['POST'])
 def recommend_user():
     user_id = session.get('user_id')
     beta = None
@@ -85,5 +86,5 @@ def recommend_user():
         return user_to_jsonify(recommender.recommend_user(user_id, beta))
 
 
-if __name__ == '__main__':
-    app.run()
+# if __name__ == '__main__':
+#     app.run()
