@@ -2,7 +2,7 @@ from flask import Flask, jsonify, session
 from app.web.violet_comment_functions import Comment
 from . import web
 
-# app = Flask(__name__) te
+# app = Flask(__name__) te  1
 
 
 @web.route('/v1/comment/load_comment', methods=['POST'])
