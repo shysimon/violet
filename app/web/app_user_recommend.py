@@ -1,5 +1,5 @@
 from flask import Flask, jsonify, session
-from user_recommend_system import UserRecommendSystem, user_to_jsonify
+from app.web.user_recommend_system import UserRecommendSystem, user_to_jsonify
 
 app = Flask(__name__)
 

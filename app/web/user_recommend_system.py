@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import pymysql
 import numpy as np
-from liked_item import LikedItem
+from app.web.liked_item import LikedItem
 import traceback
 from flask import jsonify
 
