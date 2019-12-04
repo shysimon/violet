@@ -63,6 +63,7 @@ class Thumbs(object):
 
     @staticmethod
     def like(user_id, item_type, item_id):
+        item_type = int(item_type)
         '''
         点赞
         :param user_id: 点赞的用户id
@@ -98,6 +99,8 @@ class Thumbs(object):
             elif item_type == 6:
                 sql = 'update vzone set thumbs_up_num = thumbs_up_num + 1 where zone_id = %s'
                 cursor.execute(sql, item_id)
+            else:
+                print(type(item_type))
 
             sql = 'insert into vthumbsup(user_id, item_type, item_id) \
                    values(%s, %s, %s)'
@@ -121,6 +124,7 @@ class Thumbs(object):
 
     @staticmethod
     def dislike(user_id, item_type, item_id):
+        item_type = int(item_type)
         '''
         取消赞
         :param user_id: 取消赞的用户id
