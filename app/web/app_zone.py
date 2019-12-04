@@ -1,6 +1,7 @@
-from flask import Flask, jsonify, session
+from flask import Flask, jsonify, session, request
 from app.web.violet_zone_functions import Zone
 from . import web
+
 
 # app = Flask(__name__)
 
@@ -63,9 +64,9 @@ def load_zone():
 @web.route('/v1/zone/add_zone', methods=['POST'])
 def add_zone():
     user_id = session.get('user_id')
-    content = None
-    item_type = None
-    item_id = None
+    content = request.form.get('content')
+    item_type = request.form.get('item_type')
+    item_id = request.form.get('item_id')
 
     '''
     user_id = 3
@@ -105,7 +106,7 @@ def add_zone():
 @web.route('/v1/zone/delete_zone', methods=['POST'])
 def delete_zone():
     user_id = session.get('user_id')
-    zone_id = None
+    zone_id = request.form.get('zone_id')
 
     '''
     user_id = 3
@@ -134,8 +135,8 @@ def delete_zone():
 @web.route('/v1/zone/modify_zone', methods=['POST'])
 def modify_zone():
     user_id = session.get('user_id')
-    zone_id = None
-    content = None
+    zone_id = request.form.get('zone_id')
+    content = request.form.get('content')
 
     '''
     user_id = 3
@@ -165,7 +166,6 @@ def modify_zone():
         })
 
     return Zone.modify_zone(user_id, zone_id, content)
-
 
 # if __name__ == '__main__':
 #     app.run()

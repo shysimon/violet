@@ -2,6 +2,7 @@ import traceback
 
 import pymysql
 from flask import jsonify
+import requests
 
 user = 'violet'
 pwd = 'violetzjhnb'
@@ -290,17 +291,20 @@ class SongSheet(object):
 
 
 class Song(object):
-    def __init__(self, song_id, song_name, song_img, play_times, thumbs_up_num, song_album=None):
+    def __init__(self, song_id, song_name, song_img, play_times, thumbs_up_num, song_album, music163_id, song_dt):
         self.song_id = song_id
         self.song_name = song_name
         self.song_img = song_img
         self.play_times = play_times
         self.thumbs_up_num = thumbs_up_num
         self.song_album = song_album
+        self.music163_id = music163_id
+        self.song_dt = song_dt
 
     def to_data(self, user_id):
         res = {'song_id': self.song_id, 'song_name': self.song_name, 'song_album': self.song_album,
-               'song_img': self.song_img, 'play_times': self.play_times, 'thumbs_up_num': self.thumbs_up_num}
+               'song_img': self.song_img, 'play_times': self.play_times, 'thumbs_up_num': self.thumbs_up_num,
+               'song_dt': self.song_dt, 'music163_id': self.music163_id}
         conn = get_conn()
         cursor = conn.cursor()
         if res['song_album'] is not None:
@@ -334,15 +338,30 @@ class Song(object):
     def query_all():
         conn = get_conn()
         cursor = conn.cursor()
-        sql = 'select song_id, song_name, song_img, play_times, thumbs_up_num, song_album from vsong'
+        sql = 'select song_id, song_name, song_img, play_times, thumbs_up_num, song_album, music163_id, song_dt from vsong'
         cursor.execute(sql)
         rows = cursor.fetchall()
         songs = []
         for row in rows:
-            songs.append(Song(row[0], row[1], row[2], row[3], row[4], row[5]))
+            songs.append(Song(row[0], row[1], row[2], row[3], row[4], row[5], row[6], row[7]))
         cursor.close()
         conn.close()
         print('Song.query_all() success')
+        return songs
+
+    @staticmethod
+    def query_by_name(name):
+        conn = get_conn()
+        cursor = conn.cursor()
+        sql = 'select song_id, song_name, song_img, play_times, thumbs_up_num, song_album, music163_id, song_dt from vsong where song_name like %s'
+        cursor.execute(sql, '%' + name + '%')
+        rows = cursor.fetchall()
+        songs = []
+        for row in rows:
+            songs.append(Song(row[0], row[1], row[2], row[3], row[4], row[5], row[6], row[7]))
+        cursor.close()
+        conn.close()
+        print('Song.query_by_name() success')
         return songs
 
     @staticmethod
@@ -357,10 +376,10 @@ class Song(object):
             song_ids.append(row[0])
         songs = []
         for song_id in song_ids:
-            sql = 'select song_id, song_name, song_img, play_times, thumbs_up_num, song_album from vsong where song_id = %s'
+            sql = 'select song_id, song_name, song_img, play_times, thumbs_up_num, song_album, music163_id, song_dt from vsong where song_id = %s'
             cursor.execute(sql, song_id)
             row = cursor.fetchall()[0]
-            songs.append(Song(row[0], row[1], row[2], row[3], row[4], row[5]))
+            songs.append(Song(row[0], row[1], row[2], row[3], row[4], row[5], row[6], row[7]))
         cursor.close()
         conn.close()
         print('Song.query_by_singer() success')
@@ -378,10 +397,10 @@ class Song(object):
             song_ids.append(row[0])
         songs = []
         for song_id in song_ids:
-            sql = 'select song_id, song_name, song_img, play_times, thumbs_up_num, song_album from vsong where song_id = %s'
+            sql = 'select song_id, song_name, song_img, play_times, thumbs_up_num, song_album, music163_id, song_dt from vsong where song_id = %s'
             cursor.execute(sql, song_id)
             row = cursor.fetchall()[0]
-            songs.append(Song(row[0], row[1], row[2], row[3], row[4], row[5]))
+            songs.append(Song(row[0], row[1], row[2], row[3], row[4], row[5], row[6], row[7]))
         cursor.close()
         conn.close()
         print('Song.query_by_sheet() success')
@@ -406,3 +425,48 @@ class Song(object):
 
     def __str__(self):
         return "song_id:{} song_name:{}".format(self.song_id, self.song_name)
+
+    @staticmethod
+    def add_from_music163(indict):
+        music163_id = indict['id']
+        conn = get_conn()
+        cursor = conn.cursor()
+        sql = 'select * from vsong where music163_id = %s'
+        cursor.execute(sql, music163_id)
+        if len(cursor.fetchall()) == 1:
+            return
+        singer_ids = []
+        for i in indict['ar']:
+            singer163_id = i['id']
+            sql = 'select singer_id from vsinger where singer163_id = %s'
+            cursor.execute(sql, singer163_id)
+            rows = cursor.fetchall()
+            if len(rows) == 1:
+                singer_ids.append(rows[0][0])
+                continue
+            else:
+                sql = 'insert into vsinger(singer_name, play_times, thumbs_up_num, singer163_id) values(%s,0,0,%s)'
+                cursor.execute(sql, (i['name'], singer163_id))
+                singer_ids.append(cursor.lastrowid)
+        sheet163_id = indict['al']['id']
+        sql = 'select sheet_id from vsongsheet where sheet163_id = %s'
+        cursor.execute(sql, sheet163_id)
+        rows = cursor.fetchall()
+        sheet_id = 0
+        if len(rows) == 1:
+            sheet_id = rows[0][0]
+        else:
+            sql = 'insert into vsongsheet(sheet_name, owner, sheet_img, play_times, thumbs_up_num, follow_num, sheet163_id) values(%s,0,%s,0,0,0,%s)'
+            cursor.execute(sql, (indict['al']['name'], indict['al']['picUrl'], singer163_id))
+            sheet_id = cursor.lastrowid
+        sql = 'insert into vsong(song_name, song_album, song_img, play_times, thumbs_up_num, music163_id, song_dt) values(%s,%s,%s,0,0,%s,%s)'
+        cursor.execute(sql, (indict['name'], sheet_id, indict['al']['picUrl'], music163_id, indict['dt']))
+        song_id = cursor.lastrowid
+        for i in singer_ids:
+            sql = 'insert into song_singer(singer_id, song_id) values(%s,%s)'
+            cursor.execute(sql, (i, song_id))
+        sql = 'insert into song_songsheet(sheet_id, song_id) values(%s,%s)'
+        cursor.execute(sql, (sheet_id, song_id))
+        conn.commit()
+        cursor.close()
+        conn.close()

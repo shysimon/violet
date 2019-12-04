@@ -84,12 +84,6 @@ def sheets_by_name():
         name = request.args.get('name')
     if name is None:
         return all_sheets()
-    else:
-        url = "http://shysimon.cn:3000/v1/search"
-        params = {"keywords": name}
-        res = requests.get(url, params)
-        for i in res.json()['result']['songs']:
-            print(i)
     return SongSheet.sheets_to_jsonify(user_id, SongSheet.query_by_name(name))
 
 
@@ -217,6 +211,29 @@ def all_songs():
     return Song.songs_to_jsonify(user_id, Song.query_all())
 
 
+# 通过歌曲名查询歌曲
+# 参数'name':歌曲名称
+@web.route('/v1/song/songs_by_name')
+def songs_by_name():
+    user_id = session.get("user_id")
+    if user_id is None:
+        user_id = 0
+    name = None
+    if request.method == 'POST':
+        name = request.form.get('name')
+    if request.method == 'GET':
+        name = request.args.get('name')
+    if name is None:
+        return all_songs()
+    else:
+        url = "http://shysimon.cn:3000/v1/search"
+        params = {"keywords": name}
+        res = requests.get(url, params)
+        for i in res.json()['result']['songs']:
+            Song.add_from_music163(i)
+    return Song.songs_to_jsonify(user_id, Song.query_by_name(name))
+
+
 # 通过歌手查询歌曲
 # 参数'singer_id':歌手主键
 @web.route('/v1/song/songs_by_singer')
@@ -249,6 +266,29 @@ def songs_by_sheet():
     if sheet_id is None:
         return all_songs()
     return Song.songs_to_jsonify(user_id, Song.query_by_sheet(sheet_id))
+
+@web.route('/v1/song/geturl')
+def get_music163_url():
+    music163_id = None
+    if request.method == 'POST':
+        music163_id = request.form.get('music163_id')
+    if request.method == 'GET':
+        music163_id = request.args.get('music163_id')
+    if music163_id is None:
+        return jsonify({
+            'code': -1,
+            'msg': '缺少参数music163_id'
+        })
+    return jsonify({
+            'code': 0,
+            'music163_url': get_url_from_music163(music163_id)
+        })
+
+def get_url_from_music163(music163_id):
+    url = "http://shysimon.cn:3000/v1/music/url"
+    params = {"id": music163_id, "br": 320000}
+    r = requests.get(url, params)
+    return r.json()['data'][0]['url']
 
 
 # if __name__ == '__main__':
