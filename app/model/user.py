@@ -71,7 +71,7 @@ class User(UserMixin):
             cursor.execute(sql)
             user = cursor.fetchone()
             userObject = User()
-            userObject.set_attr(user)
+            userObject.set_attr(user, 0)
             return userObject
         except:
             print("Error: unable to fetch data")
@@ -120,7 +120,7 @@ def get_user(userid):
         cursor.execute(sql)
         user = cursor.fetchone()
         userObject = User()
-        userObject.set_attr(user)
+        userObject.set_attr(user, 0)
         return userObject
     except:
         print("Error: unable to fetch data")
