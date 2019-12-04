@@ -34,7 +34,7 @@ class Zone(object):
         else:
             conn = get_conn()
             cursor = conn.cursor()
-            sql = 'select count(*) from violet.vcomment where item_type = 6 and item_id = %s'
+            sql = 'select count(*) from vcomment where item_type = 6 and item_id = %s'
             cursor.execute(sql, data['zone_id'])
             data['comment_count'] = cursor.fetchall()[0][0]
             sql = 'select user_nickname from vuser where user_id = %s'
