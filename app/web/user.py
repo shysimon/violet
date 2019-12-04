@@ -14,7 +14,7 @@ from app.web import web
 
 # 查找用户
 @web.route('/v1/user/search', methods=['POST'])
-@login_required
+# @login_required
 def searchUser():
     db = pymysql.connect(host=current_app.config['HOST'], user=current_app.config['USER'],
                          password=current_app.config['PASSWORD'], port=current_app.config['PORT'],
@@ -29,12 +29,14 @@ def searchUser():
         cursor.execute(sql)
         user = cursor.fetchone()
         userObject = User()
-        userObject.set_attr(user)
-        userObject.__dict__.pop('password')
+        userObject.set_attr(user, session.get('user_id'))
+        res = userObject.__dict__
+        res.pop('password')
+
         # u = userObject.__dict__
         return jsonify({
             "code": 200,
-            "user": userObject.__dict__
+            "user": res
         })
     except:
         return jsonify({
@@ -47,7 +49,7 @@ def searchUser():
 
 # 查找自己关注的用户
 @web.route('/v1/user/searchfollow', methods=['POST'])
-@login_required
+# @login_required
 def searchfollow():
     db = pymysql.connect(host=current_app.config['HOST'], user=current_app.config['USER'],
                          password=current_app.config['PASSWORD'], port=current_app.config['PORT'],
@@ -65,7 +67,7 @@ def searchfollow():
             cursor.execute(sql)
             user = cursor.fetchone()
             userObject = User()
-            userObject.set_attr(user)
+            userObject.set_attr(user, session.get('user_id'))
             userArray.append(userObject)
         return jsonify({
             "code": 200,
@@ -82,7 +84,7 @@ def searchfollow():
 
 # 关注
 @web.route('/v1/user/follow', methods=['POST'])
-@login_required
+# @login_required
 def follow():
     db = pymysql.connect(host=current_app.config['HOST'], user=current_app.config['USER'],
                          password=current_app.config['PASSWORD'], port=current_app.config['PORT'],
@@ -113,9 +115,42 @@ def follow():
         db.close()
 
 
+# 是否关注
+@web.route('/v1/user/is_followed', methods=['POST'])
+# @login_required
+def is_followed():
+    db = pymysql.connect(host=current_app.config['HOST'], user=current_app.config['USER'],
+                         password=current_app.config['PASSWORD'], port=current_app.config['PORT'],
+                         database=current_app.config['DATABASE'], charset=current_app.config['CHARSET'])
+    cursor = db.cursor()
+
+    try:
+        user = get_user(request.form['toUserid'])
+        if user is None:
+            return jsonify({
+                "code": -1,
+                "errMsg": "关注用户不存在"
+            })
+        uid = session.get("user_id")
+        sql = "select * from violet.vfollow where user_id = %s and to_user_id = %s" % (uid, request.form['toUserid'])
+        cursor.execute(sql)
+        return jsonify({
+            "code": 0,
+            "is_followed": len(cursor.fetchall()) == 1
+        })
+    except:
+        return jsonify({
+            "code": -1,
+            "errMsg": "数据库操作失败"
+        })
+    finally:
+        cursor.close()
+        db.close()
+
+
 # 取消关注
 @web.route("/v1/user/unfollow", methods=['POST'])
-@login_required
+# @login_required
 def unfollow():
     db = pymysql.connect(host=current_app.config['HOST'], user=current_app.config['USER'],
                          password=current_app.config['PASSWORD'], port=current_app.config['PORT'],
@@ -149,7 +184,7 @@ def unfollow():
 
 # 修改用户个人信息
 @web.route("/v1/user/modify", methods=['POST'])
-@login_required
+# @login_required
 def modifyUser():
     uid = session.get("user_id")
     db = pymysql.connect(host=current_app.config['HOST'], user=current_app.config['USER'],
@@ -209,7 +244,7 @@ def modifyUser():
 # 用户生日提醒/除了用户自己，还返回了关注该用户的用户数组，和该用户的生日
 # 这里的估计还有多少天到用户生日是粗略的，不顾问题不大
 @web.route("/v1/user/reminder/birth", methods=['POST'])
-@login_required
+# @login_required
 def birthReminder():
     db = pymysql.connect(host=current_app.config['HOST'], user=current_app.config['USER'],
                          password=current_app.config['PASSWORD'], port=current_app.config['PORT'],
@@ -241,7 +276,7 @@ def birthReminder():
                 cursor.execute(sql)
                 user = cursor.fetchone()
                 userObject = User()
-                userObject.set_attr(user)
+                userObject.set_attr(user, session.get('user_id'))
                 userArray.append(userObject)
             return jsonify({
                 "code": 200,
@@ -263,7 +298,7 @@ def birthReminder():
 
 # 修改用户密码
 @web.route("/v1/user/changepwd", methods=['POST'])
-@login_required
+# @login_required
 def changePassword():
     uid = session.get("user_id")
     passwordFrom = ResetPasswordForm(request.form)
@@ -313,7 +348,7 @@ def searchByName():
             cursor.execute(sql)
             user = cursor.fetchone()
             userObject = User()
-            userObject.set_attr(user)
+            userObject.set_attr(user, session.get('user_id'))
             userArray.append(userObject)
 
         return jsonify({

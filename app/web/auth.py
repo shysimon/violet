@@ -70,7 +70,7 @@ def login():
                     "errMsg": "账号不存在"
                 })
             userObject = User()
-            userObject.set_attr(user)
+            userObject.set_attr(user, 0)
             if user and check_password_hash(userObject.password, form.data['password']):
                 login_user(userObject)
                 return jsonify({
@@ -137,7 +137,7 @@ def forget_password(token):
 
 
 @web.route('/v1/auth/logout', methods=['POST', 'GET'])
-@login_required
+# @login_required
 def logout():
     logout_user()
     return jsonify({

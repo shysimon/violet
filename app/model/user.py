@@ -18,9 +18,13 @@ class User(UserMixin):
     userType = None
     info = None  # 简介
     email = None
+    zoneCount = None
+    fansCount = None
+    followCount = None
+    isFollowed = None
 
     # 从数据库中取出的信息赋值给user对象，因为数据库取出的信息是元组，所以这里好像不能通过字段名获得相应值，只能通过下标
-    def set_attr(self, user):
+    def set_attr(self, user, nowid):
         self.userId = user[0]
         self.userNickName = user[1]
         self.password = user[2]
@@ -31,6 +35,25 @@ class User(UserMixin):
         self.userType = user[7]
         self.info = user[8]  # 简介
         self.email = user[9]
+        db = pymysql.connect(host=current_app.config['HOST'], user=current_app.config['USER'],
+                             password=current_app.config['PASSWORD'], port=current_app.config['PORT'],
+                             database=current_app.config['DATABASE'],
+                             charset=current_app.config['CHARSET'])
+        cursor = db.cursor()
+        sql = 'select count(*) from violet.vzone where user_id = %s'
+        cursor.execute(sql, self.userId)
+        self.zoneCount = cursor.fetchall()[0][0]
+        sql = 'select count(*) from violet.vfollow where user_id = %s'
+        cursor.execute(sql, self.userId)
+        self.followCount = cursor.fetchall()[0][0] - 1
+        sql = 'select count(*) from violet.vfollow where to_user_id = %s'
+        cursor.execute(sql, self.userId)
+        self.fansCount = cursor.fetchall()[0][0] - 1
+        sql = "select * from violet.vfollow where user_id = %s and to_user_id = %s" % (nowid, self.userId)
+        cursor.execute(sql)
+        self.isFollowed = len(cursor.fetchall()) == 1
+        cursor.close()
+        db.cursor()
 
     def get_id(self):
         return self.userId
