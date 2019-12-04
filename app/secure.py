@@ -1,12 +1,13 @@
 DEBUG = True
 
 # host = "45.40.202.216"
-HOST = "localhost"
+# HOST = "localhost"
+HOST = "45.40.202.216"
 PORT = 3306
-USER = "root"
-PASSWORD = "1139464337"
-# USER = "violet"
-# PASSWORD = "violetzjhnb"
+# USER = "root"
+# PASSWORD = "1139464337"
+USER = "violet"
+PASSWORD = "violetzjhnb"
 DATABASE = "violet"
 CHARSET = 'utf8'
 
