@@ -32,12 +32,12 @@ def searchUser():
         userObject.set_attr(user)
         # u = userObject.__dict__
         return jsonify({
-            "code": "200",
+            "code": 200,
             "user": userObject.__dict__
         })
     except:
         return jsonify({
-            "code": "-1",
+            "code": -1,
             "errMsg": "数据库操作失败"
         })
     finally:
@@ -67,12 +67,12 @@ def searchfollow():
             userObject.set_attr(user)
             userArray.append(userObject)
         return jsonify({
-            "code": "200",
+            "code": 200,
             "userArray": json.loads(json.dumps(userArray, default=lambda o: o.__dict__))
         })
     except:
         return jsonify({
-            "code": "-1",
+            "code": -1,
             "errMsg": "数据库操作失败"
         })
     finally:
@@ -92,7 +92,7 @@ def follow():
         user = get_user(request.form['toUserid'])
         if user is None:
             return jsonify({
-                "code": "-1",
+                "code": -1,
                 "errMsg": "关注用户不存在"
             })
         uid = session.get("user_id")
@@ -100,12 +100,12 @@ def follow():
         cursor.execute(sql)
         db.commit()
         return jsonify({
-            "code": "200"
+            "code": 200
         })
     except:
         db.rollback()
         return jsonify({
-            "code": "-1",
+            "code": -1,
             "errMsg": "数据库操作失败"
         })
     finally:
@@ -125,7 +125,7 @@ def unfollow():
         user = get_user(request.form['toUserid'])
         if user is None:
             return jsonify({
-                "code": "-1",
+                "code": -1,
                 "errMsg": "关注用户不存在"
             })
         # uid = session.get("user_id")
@@ -134,12 +134,12 @@ def unfollow():
         cursor.execute(sql)
         db.commit()
         return jsonify({
-            "code": "200"
+            "code": 200
         })
     except:
         db.rollback()
         return jsonify({
-            "code": "-1",
+            "code": -1,
             "errMsg": "数据库操作失败"
         })
     finally:
@@ -193,12 +193,12 @@ def modifyUser():
         cursor.execute(sql)
         db.commit()
         return jsonify({
-            "code": "200"
+            "code": 200
         })
     except:
         db.rollback()
         return jsonify({
-            "code": "-1",
+            "code": -1,
             "errMsg": "数据库操作失败"
         })
     finally:
@@ -281,12 +281,12 @@ def changePassword():
                 cursor.execute(sql)
                 db.commit()
                 return jsonify({
-                    "code": "200"
+                    "code": 200
                 })
             except:
                 db.rollback()
                 return jsonify({
-                    "code": "-1",
+                    "code": -1,
                     "errMsg": "密码修改失败"
                 })
             finally:

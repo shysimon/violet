@@ -33,7 +33,7 @@ def register():
             # 发生错误时回滚
             db.rollback()
             return jsonify({
-                "code": "-1",
+                "code": -1,
                 "msg": e.args,
                 "errMsg": "数据库操作失败"
             })
@@ -41,11 +41,11 @@ def register():
             # 关闭数据库连接
             db.close()
         return jsonify({
-            "code": "200"
+            "code": 200
         })
     else:
         return jsonify({
-            "code": "-1",
+            "code": -1,
             "errMsg": form.errors
         })
 
@@ -75,12 +75,12 @@ def login():
                 })
             else:
                 return jsonify({
-                    "code": "-1",
+                    "code": -1,
                     "errMsg": "账号或密码输入错误"
                 })
         except Exception as e:
             return jsonify({
-                "code": "-1",
+                "code": -1,
                 "msg": e.args,
                 "errMsg": "数据库操作错误"
             })
@@ -89,7 +89,7 @@ def login():
             db.close()
     else:
         return jsonify({
-            "code": "-1",
+            "code": -1,
             "errMsg": form.errors
         })
 
@@ -103,16 +103,16 @@ def forget_password_request():
         if user is not None:
             send_mail(account_email, "重置你的密码", 'email/reset_password.html', user=user, token=user.generate_token())
             return jsonify({
-                "code": "200"
+                "code": 200
             })
         else:
             return jsonify({
-                "code": "-1",
+                "code": -1,
                 "errMsg": "邮箱不存在"
             })
     else:
         return jsonify({
-            "code": "-1",
+            "code": -1,
             "errMsg": form.errors
         })
 
@@ -124,11 +124,11 @@ def forget_password(token):
         success = User.reset_password(token, form.password1.data)
         if success:
             return jsonify({
-                "code": "200"
+                "code": 200
             })
         else:
             return jsonify({
-                "code": "-1",
+                "code": -1,
                 "errMsg": "密码修改失败"
             })
 
@@ -138,5 +138,5 @@ def forget_password(token):
 def logout():
     logout_user()
     return jsonify({
-        "code": "200"
+        "code": 200
     })
