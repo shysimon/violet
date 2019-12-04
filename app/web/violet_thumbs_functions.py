@@ -21,7 +21,7 @@ class Thumbs(object):
 
     def to_data(self):
         data = {'user_id': self.user_id, 'item_type': self.item_type, 'item_id': self.item_id}
-        if data['user_id'] == 0: # 表示是系统所有
+        if data['user_id'] == 0:  # 表示是系统所有
             data['user_id'] = '点赞'
         else:
             conn = get_conn()
@@ -75,12 +75,29 @@ class Thumbs(object):
 
         try:
             is_liked = Thumbs.query_like(user_id, item_type, item_id)
-
             if is_liked == True:
                 return jsonify({
                     'code': -1,
                     'msg': '已存在点赞记录'
                 })
+            if item_type == 1:
+                sql = 'update vsong set thumbs_up_num = thumbs_up_num + 1 where song_id = %s'
+                cursor.execute(sql, item_id)
+            elif item_type == 2:
+                sql = 'update vsongsheet set thumbs_up_num = thumbs_up_num + 1 where sheet_id = %s'
+                cursor.execute(sql, item_id)
+            elif item_type == 3:
+                sql = 'update vsinger set thumbs_up_num = thumbs_up_num + 1 where singer_id = %s'
+                cursor.execute(sql, item_id)
+            elif item_type == 4:
+                sql = 'update vpost set thumbs_up_num = thumbs_up_num + 1 where post_id = %s'
+                cursor.execute(sql, item_id)
+            elif item_type == 5:
+                sql = 'update vcomment set thumbs_up_num = thumbs_up_num + 1 where comment_id = %s'
+                cursor.execute(sql, item_id)
+            elif item_type == 6:
+                sql = 'update vzone set thumbs_up_num = thumbs_up_num + 1 where zone_id = %s'
+                cursor.execute(sql, item_id)
 
             sql = 'insert into vthumbsup(user_id, item_type, item_id) \
                    values(%s, %s, %s)'
@@ -122,6 +139,25 @@ class Thumbs(object):
                     'code': -1,
                     'msg': '不存在点赞记录'
                 })
+
+            if item_type == 1:
+                sql = 'update vsong set thumbs_up_num = thumbs_up_num - 1 where song_id = %s'
+                cursor.execute(sql, item_id)
+            elif item_type == 2:
+                sql = 'update vsongsheet set thumbs_up_num = thumbs_up_num - 1 where sheet_id = %s'
+                cursor.execute(sql, item_id)
+            elif item_type == 3:
+                sql = 'update vsinger set thumbs_up_num = thumbs_up_num - 1 where singer_id = %s'
+                cursor.execute(sql, item_id)
+            elif item_type == 4:
+                sql = 'update vpost set thumbs_up_num = thumbs_up_num - 1 where post_id = %s'
+                cursor.execute(sql, item_id)
+            elif item_type == 5:
+                sql = 'update vcomment set thumbs_up_num = thumbs_up_num - 1 where comment_id = %s'
+                cursor.execute(sql, item_id)
+            elif item_type == 6:
+                sql = 'update vzone set thumbs_up_num = thumbs_up_num - 1 where zone_id = %s'
+                cursor.execute(sql, item_id)
 
             sql = 'delete from vthumbsup \
                    where user_id = %s and item_type = %s and item_id = %s'

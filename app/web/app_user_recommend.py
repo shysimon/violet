@@ -1,4 +1,4 @@
-from flask import Flask, jsonify, session
+from flask import Flask, jsonify, session, request
 from app.web.user_recommend_system import UserRecommendSystem, user_to_jsonify
 from . import web
 
@@ -8,7 +8,7 @@ from . import web
 @web.route('/v1/recommend/user', methods=['POST'])
 def recommend_user():
     user_id = session.get('user_id')
-    beta = None
+    beta = request.form.get('beta')
 
     '''
     user_id = 1

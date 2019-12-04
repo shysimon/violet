@@ -1,4 +1,4 @@
-from flask import Flask, jsonify, session
+from flask import Flask, jsonify, session, request
 from app.web.violet_comment_functions import Comment
 from . import web
 
@@ -8,8 +8,8 @@ from . import web
 @web.route('/v1/comment/load_comment', methods=['POST'])
 def load_comment():
     user_id = session.get('user_id')
-    item_type = None
-    item_id = None
+    item_type = request.form.get('item_type')
+    item_id = request.form.get('item_id')
     '''
     测试结果：
     user_id = 1
@@ -65,9 +65,9 @@ def load_comment():
 @web.route('/v1/comment/add_comment', methods=['POST'])
 def add_comment():
     user_id = session.get('user_id')
-    item_type = None
-    item_id = None
-    content = None
+    item_type = request.form.get('item_type')
+    item_id = request.form.get('item_id')
+    content = request.form.get('content')
     '''
     测试结果：
     user_id = 2
@@ -106,7 +106,7 @@ def add_comment():
 @web.route('/v1/comment/delete_comment', methods=['POST'])
 def delete_comment():
     user_id = session.get('user_id')
-    comment_id = None
+    comment_id = request.form.get('comment_id')
     '''
     测试结果：
     user_id = 2
@@ -133,8 +133,8 @@ def delete_comment():
 @web.route('/v1/comment/modify_comment', methods=['POST'])
 def modify_comment():
     user_id = session.get('user_id')
-    comment_id = None
-    content = None
+    comment_id = request.form.get('comment_id')
+    content = request.form.get('content')
     '''
     测试结果：
     user_id = 1
