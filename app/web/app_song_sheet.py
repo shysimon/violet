@@ -1,6 +1,7 @@
 from flask import Flask, request, jsonify, session
 from flask_login import login_required
 from . import web
+import requests
 
 from app.web.violet_songsheet_functions import SongSheet, Song
 
@@ -83,6 +84,12 @@ def sheets_by_name():
         name = request.args.get('name')
     if name is None:
         return all_sheets()
+    else:
+        url = "http://shysimon.cn:3000/v1/search"
+        params = {"keywords": name}
+        res = requests.get(url, params)
+        for i in res.json()['result']['songs']:
+            print(i)
     return SongSheet.sheets_to_jsonify(user_id, SongSheet.query_by_name(name))
 
 

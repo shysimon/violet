@@ -21,7 +21,7 @@ def searchUser():
                          database=current_app.config['DATABASE'], charset=current_app.config['CHARSET'])
     cursor = db.cursor()
     sql = ""
-    if request.form['uid'] is None:
+    if request.form.get('uid') is None:
         sql = "SELECT * FROM vuser WHERE user_id = %s" % (session.get('user_id'))
     else:
         sql = "SELECT * FROM vuser WHERE user_id = %s" % (request.form['uid'])
