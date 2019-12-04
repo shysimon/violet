@@ -440,7 +440,9 @@ class Song(object):
             return
         singer_ids = []
         for i in indict['ar']:
-            singer163_id = i['id']
+            singer163_id = int(i['id'])
+            if singer163_id == 0:
+                return
             sql = 'select singer_id from vsinger where singer163_id = %s'
             cursor.execute(sql, singer163_id)
             rows = cursor.fetchall()

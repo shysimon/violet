@@ -203,7 +203,7 @@ def sheet_delete_song():
 
 # 读取所有歌曲信息
 # 无参数
-@web.route('/v1/song/all_songs')
+@web.route('/v1/song/all_songs', methods=['GET', 'POST'])
 def all_songs():
     user_id = session.get("user_id")
     if user_id is None:
@@ -213,7 +213,7 @@ def all_songs():
 
 # 通过歌曲名查询歌曲
 # 参数'name':歌曲名称
-@web.route('/v1/song/songs_by_name')
+@web.route('/v1/song/songs_by_name', methods=['GET', 'POST'])
 def songs_by_name():
     user_id = session.get("user_id")
     if user_id is None:
@@ -236,7 +236,7 @@ def songs_by_name():
 
 # 通过歌手查询歌曲
 # 参数'singer_id':歌手主键
-@web.route('/v1/song/songs_by_singer')
+@web.route('/v1/song/songs_by_singer', methods=['GET', 'POST'])
 def songs_by_singer():
     user_id = session.get("user_id")
     if user_id is None:
@@ -253,7 +253,7 @@ def songs_by_singer():
 
 # 通过歌单查询歌曲
 # 参数'sheet_id':歌单主键
-@web.route('/v1/song/songs_by_sheet')
+@web.route('/v1/song/songs_by_sheet', methods=['GET', 'POST'])
 def songs_by_sheet():
     user_id = session.get("user_id")
     if user_id is None:
@@ -267,7 +267,7 @@ def songs_by_sheet():
         return all_songs()
     return Song.songs_to_jsonify(user_id, Song.query_by_sheet(sheet_id))
 
-@web.route('/v1/song/geturl')
+@web.route('/v1/song/geturl', methods=['GET', 'POST'])
 def get_music163_url():
     music163_id = None
     if request.method == 'POST':
