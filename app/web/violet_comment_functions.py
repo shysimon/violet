@@ -2,6 +2,7 @@ import pymysql
 from app.web.violet_thumbs_functions import Thumbs
 import traceback
 from flask import jsonify
+from app.lib.time_output import my_time_to_string
 
 user = 'violet'
 pwd = 'violetzjhnb'
@@ -27,7 +28,7 @@ class Comment(object):
 
     def to_data(self):
         data = {'comment_id': self.comment_id, 'user_id': self.user_id, 'item_type': self.item_type,
-                'item_id': self.item_id, 'content': self.content, 'create_time': self.create_time,
+                'item_id': self.item_id, 'content': self.content, 'create_time': my_time_to_string(self.create_time),
                 'thumbs_up_num': self.thumbs_up_num, 'is_liked': self.is_liked}
         if data['user_id'] == 0: # 表示是系统所有
             data['user_id'] = '评论'

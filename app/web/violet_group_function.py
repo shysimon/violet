@@ -2,6 +2,7 @@ import pymysql
 from datetime import datetime
 import traceback
 from flask import jsonify
+from app.lib.time_output import my_time_to_string
 
 
 def get_connection():
@@ -35,7 +36,7 @@ class Group(object):
         self.user_id = user_id
 
     @staticmethod
-    def load_group(user_id):
+    def load_group():
         '''
         加载所有圈子
         圈子按其关注人数从大到小排序
@@ -59,18 +60,18 @@ class Group(object):
             sql = 'select * from vgroup order by follow_num desc'
             cursor.execute(sql)
             result = cursor.fetchall()
+            for i in result:
+                i['create_time'] = my_time_to_string(i['create_time'])
             json_data['code'] = 0
             json_data['data'] = result
             print('success!')
             return jsonify(json_data)
         except BaseException as e:
-            conn.rollback()
             print(e.args)
             print(traceback.format_exc())
             json_data['msg'] = e.args
             return jsonify(json_data)
         finally:
-            conn.commit()
             conn.close()
             cursor.close()
 
@@ -93,8 +94,8 @@ class Group(object):
         json_data['code'] = -1
         json_data['data'] = ['failed to add group']
         try:
-            sql = 'select * from vgroup where group_name = \'' + group_name+'\''
-            if cursor.execute(sql) > 0 :
+            sql = 'select * from vgroup where group_name = \'' + group_name + '\''
+            if cursor.execute(sql) > 0:
                 print('the group name is occupied')
                 json_data['data'] = '该圈子名已被占用'
                 return json_data
@@ -102,7 +103,8 @@ class Group(object):
                   '(user_id,group_name,create_time,info,thumbs_up_num,follow_num)' \
                   ' values' \
                   ' (%s, %s, %s, %s, %s, %s)'
-            cursor.execute(sql, [user_id, group_name, datetime.now().strftime('%Y-%m-%d %H:%M:%S'), info, thumbs_up_num, follow_num])
+            cursor.execute(sql, [user_id, group_name, datetime.now().strftime('%Y-%m-%d %H:%M:%S'), info, thumbs_up_num,
+                                 follow_num])
             json_data['code'] = 0
             json_data['data'] = '添加圈子成功'
             print('success!')
@@ -119,7 +121,7 @@ class Group(object):
             cursor.close()
 
     @staticmethod
-    def delete_group(group_id):
+    def delete_group(group_id, user_id):
         '''
         删除指定的圈子
         :param group_id: 要删除的圈子的id
@@ -133,10 +135,16 @@ class Group(object):
         json_data['code'] = -1
         json_data['data'] = ['failed to delete group']
         try:
+            sql = 'select user_id from violet.vgroup where group_id  = %s'
+            cursor.execute(sql, [group_id])
+            rows = cursor.fetchall()
+            if str(rows[0][0]) != user_id:
+                json_data['data'].append('歌单属于userid: ' + str(rows[0][0]))
+                return jsonify(json_data)
             sql = 'delete from vpost where group_id = %s'
-            cursor.execute(sql,[group_id])
+            cursor.execute(sql, [group_id])
             sql = 'delete from vgroup where group_id  = %s'
-            cursor.execute(sql,[group_id])
+            cursor.execute(sql, [group_id])
             json_data['code'] = 0
             json_data['data'] = '删除圈子成功'
             print('success!')
@@ -232,10 +240,9 @@ class Group(object):
             conn.close()
             cursor.close()
 
-
-if __name__ == '__main__':
-    print('hello world')
-    # data = search_group('group')
-    # print(data)
-    # print('hello world!')
-    # Group.search_group(group)
+# if __name__ == '__main__':
+#     print('hello world')
+# data = search_group('group')
+# print(data)
+# print('hello world!')
+# Group.search_group(group)

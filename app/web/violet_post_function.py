@@ -1,6 +1,8 @@
 import pymysql
 from datetime import datetime
 import traceback
+
+from app.lib.time_output import my_time_to_string
 from app.web.violet_thumbs_functions import Thumbs
 
 
@@ -69,6 +71,8 @@ class Post(object):
                 post_id = post['post_id']
                 is_liked = Thumbs.query_like(user_id, item_type, post_id)
                 post['is_liked'] = is_liked
+                post['create_time'] = my_time_to_string(post['create_time'])
+                post['recent_time'] = my_time_to_string(post['recent_time'])
             json_data['data'] = result
             json_data['code'] = 0
             print('success!')
@@ -222,6 +226,9 @@ class Post(object):
             sql = 'select * from vpost where group_id = \''+group_id +'\' and post_title like \'%' + keyword + '%\''
             cursor.execute(sql)
             result = cursor.fetchall()
+            for post in result:
+                post['create_time'] = my_time_to_string(post['create_time'])
+                post['recent_time'] = my_time_to_string(post['recent_time'])
             json_data['data'] = result
             json_data['code'] = 0
             print('success!')

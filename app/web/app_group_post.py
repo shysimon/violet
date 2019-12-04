@@ -18,22 +18,14 @@ def load_group():
 
 @web.route('/v1/group/search_group', methods=['POST', 'GET'])
 def search_group():
-    user_id = None
     keyword = None
 
     if request.method == 'POST':
-        user_id = session.get('user_id')
         # user_id = 1
         keyword = request.form.get('keyword')
     if request.method == 'GET':
-        user_id = session.get('user_id')
         # user_id = 1
         keyword = request.args.get('keyword')
-    if user_id is None:
-        return jsonify({
-            'code': '-1',
-            'msg': '缺少参数owner'
-        })
     if keyword is None:
         return jsonify({
             'code': '-1',
@@ -105,7 +97,7 @@ def delete_group():
             'code': -1,
             'msg': '缺少参数group_id'
         })
-    return Group.delete_group(group_id)
+    return Group.delete_group(group_id,user_id)
 
 
 @web.route('/v1/group/invite_friend', methods=['POST', 'GET'])
