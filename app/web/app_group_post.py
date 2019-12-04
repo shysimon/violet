@@ -3,6 +3,7 @@ from app.web.violet_group_function import Group
 from app.web.violet_post_function import Post
 from . import web
 
+
 # app = Flask(__name__)
 
 
@@ -97,7 +98,7 @@ def delete_group():
             'code': -1,
             'errMsg': '缺少参数group_id'
         })
-    return Group.delete_group(group_id,user_id)
+    return Group.delete_group(group_id, user_id)
 
 
 @web.route('/v1/group/invite_friend', methods=['POST', 'GET'])
@@ -138,12 +139,10 @@ def load_post():
     user_id = None
     group_id = None
     if request.method == 'POST':
-        # user_id = session.get('user_id')
-        user_id = 1
+        user_id = session.get('user_id')
         group_id = request.form.get('group_id')
     if request.method == 'GET':
-        # user_id = session.get('user_id')
-        user_id = 1
+        user_id = session.get('user_id')
         group_id = request.args.get('group_id')
     if user_id is None:
         return jsonify({
@@ -291,8 +290,7 @@ def search_post():
             'errMsg': '缺少参数group_id'
         })
 
-    return Post.search_post(keyword, group_id)
-
+    return Post.search_post(keyword, group_id, user_id)
 
 # if __name__ == '__main__':
 #     app.run()

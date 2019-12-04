@@ -27,7 +27,8 @@ def get_connection():
 
 
 class Post(object):
-    def __init__(self, post_id, group_id, user_id, post_title, content, create_time, recent_time, thumbs_up_num, is_liked):
+    def __init__(self, post_id, group_id, user_id, post_title, content, create_time, recent_time, thumbs_up_num,
+                 is_liked):
         self.post_id = post_id
         self.group_id = group_id
         self.user_id = user_id
@@ -68,11 +69,17 @@ class Post(object):
             result = cursor.fetchall()
             item_type = 4
             for post in result:
+                sql = 'select count(*) from vcomment where item_type = 4 and item_id = %s'
+                cursor.execute(sql, post['post_id'])
+                post['comment_num'] = cursor.fetchall()[0][0]
                 post_id = post['post_id']
                 is_liked = Thumbs.query_like(user_id, item_type, post_id)
                 post['is_liked'] = is_liked
                 post['create_time'] = my_time_to_string(post['create_time'])
                 post['recent_time'] = my_time_to_string(post['recent_time'])
+                sql = 'select user_nickname from vuser where user_id = %'
+                cursor.execute(sql, post['user_id'])
+                post['owner_nickname'] = cursor.fetchall()[0][0]
             json_data['data'] = result
             json_data['code'] = 0
             print('success!')
@@ -113,7 +120,7 @@ class Post(object):
                   '(group_id, user_id, post_title, content, create_time, recent_time, thumbs_up_num)' \
                   'values ' \
                   '(%s, %s, %s, %s, %s, %s, %s)'
-            cursor.execute(sql,[group_id, user_id, post_title, content, dt, dt, thumbs_up_num])
+            cursor.execute(sql, [group_id, user_id, post_title, content, dt, dt, thumbs_up_num])
             json_data['code'] = 0
             json_data['data'] = '添加帖子成功'
             print('success')
@@ -199,7 +206,7 @@ class Post(object):
             cursor.close()
 
     @staticmethod
-    def search_post(keyword, group_id):
+    def search_post(keyword, group_id, user_id):
         '''
         在指定圈子下搜索帖子
         :param keyword: 帖子标题
@@ -223,12 +230,22 @@ class Post(object):
         json_data['code'] = -1
         json_data['data'] = []
         try:
-            sql = 'select * from vpost where group_id = \''+group_id +'\' and post_title like \'%' + keyword + '%\''
+            sql = 'select * from vpost where group_id = \'' + group_id + '\' and post_title like \'%' + keyword + '%\''
             cursor.execute(sql)
             result = cursor.fetchall()
+            item_type = 4
             for post in result:
+                sql = 'select count(*) from vcomment where item_type = 4 and item_id = %s'
+                cursor.execute(sql, post['post_id'])
+                post['comment_num'] = cursor.fetchall()[0][0]
+                post_id = post['post_id']
+                is_liked = Thumbs.query_like(user_id, item_type, post_id)
+                post['is_liked'] = is_liked
                 post['create_time'] = my_time_to_string(post['create_time'])
                 post['recent_time'] = my_time_to_string(post['recent_time'])
+                sql = 'select user_nickname from vuser where user_id = %'
+                cursor.execute(sql, post['user_id'])
+                post['owner_nickname'] = cursor.fetchall()[0][0]
             json_data['data'] = result
             json_data['code'] = 0
             print('success!')
