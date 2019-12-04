@@ -34,8 +34,7 @@ def register():
             db.rollback()
             return jsonify({
                 "code": -1,
-                "msg": e.args,
-                "errMsg": "数据库操作失败"
+                "errMsg": e.args
             })
         finally:
             # 关闭数据库连接
@@ -65,6 +64,11 @@ def login():
         try:
             cursor.execute(sql)
             user = cursor.fetchone()
+            if len(user) == 0:
+                return jsonify({
+                    "code": -1,
+                    "errMsg": "账号不存在"
+                })
             userObject = User()
             userObject.set_attr(user)
             if user and check_password_hash(userObject.password, form.data['password']):
@@ -81,8 +85,7 @@ def login():
         except Exception as e:
             return jsonify({
                 "code": -1,
-                "msg": e.args,
-                "errMsg": "数据库操作错误"
+                "errMsg": e.args
             })
         finally:
             # 关闭数据库连接

@@ -137,14 +137,14 @@ class SongSheet(object):
             cursor.execute(sql, (sheet_id, owner))
             conn.commit()
             json_data['code'] = 0
-            json_data['msg'] = '添加歌单成功,sheet_id:' + str(sheet_id)
+            json_data['Msg'] = '添加歌单成功,sheet_id:' + str(sheet_id)
             return jsonify(json_data)
         except Exception as e:
             conn.rollback()
             print(e.args)
             print(traceback.format_exc())
             json_data['code'] = -1
-            json_data['msg'] = e.args
+            json_data['errMsg'] = e.args
             return jsonify(json_data)
         finally:
             cursor.close()
@@ -162,12 +162,12 @@ class SongSheet(object):
             if len(rows) == 0:
                 return jsonify({
                     'code': -1,
-                    'msg': '歌单不存在'
+                    'errMsg': '歌单不存在'
                 })
             if str(rows[0][0]) != owner:
                 return jsonify({
                     'code': -1,
-                    'msg': '歌单属于userid: ' + str(rows[0][0])
+                    'errMsg': '歌单属于userid: ' + str(rows[0][0])
                 })
             sql = 'select type_id from symbol_table where type_name= %s'
             cursor.execute(sql, 'vsongsheet')
@@ -185,14 +185,14 @@ class SongSheet(object):
             conn.commit()
             return jsonify({
                 'code': 0,
-                'msg': '删除歌单成功'
+                'Msg': '删除歌单成功'
             })
         except Exception as e:
             conn.rollback()
             print(e.args)
             print(traceback.format_exc())
             json_data['code'] = -1
-            json_data['msg'] = e.args
+            json_data['errMsg'] = e.args
             return jsonify(json_data)
         finally:
             cursor.close()
@@ -210,26 +210,26 @@ class SongSheet(object):
             if len(rows) == 0:
                 return jsonify({
                     'code': -1,
-                    'msg': '歌单不存在'
+                    'errMsg': '歌单不存在'
                 })
             if str(rows[0][0]) != user_id:
                 return jsonify({
                     'code': -1,
-                    'msg': '歌单属于userid: ' + str(rows[0][0])
+                    'errMsg': '歌单属于userid: ' + str(rows[0][0])
                 })
             sql = 'insert into song_songsheet(sheet_id, song_id) values(%s,%s)'
             cursor.execute(sql, (sheet_id, song_id))
             conn.commit()
             return jsonify({
                 'code': 0,
-                'msg': '歌单添加歌曲成功'
+                'Msg': '歌单添加歌曲成功'
             })
         except Exception as e:
             conn.rollback()
             print(e.args)
             print(traceback.format_exc())
             json_data['code'] = -1
-            json_data['msg'] = e.args
+            json_data['errMsg'] = e.args
             return jsonify(json_data)
         finally:
             cursor.close()
@@ -247,26 +247,26 @@ class SongSheet(object):
             if len(rows) == 0:
                 return jsonify({
                     'code': -1,
-                    'msg': '歌单不存在'
+                    'errMsg': '歌单不存在'
                 })
             if str(rows[0][0]) != user_id:
                 return jsonify({
                     'code': -1,
-                    'msg': '歌单属于userid: ' + str(rows[0][0])
+                    'errMsg': '歌单属于userid: ' + str(rows[0][0])
                 })
             sql = 'delete from song_songsheet where sheet_id = %s and song_id = %s'
             cursor.execute(sql, (sheet_id, song_id))
             conn.commit()
             return jsonify({
                 'code': 0,
-                'msg': '歌单删除歌曲成功'
+                'Msg': '歌单删除歌曲成功'
             })
         except Exception as e:
             conn.rollback()
             print(e.args)
             print(traceback.format_exc())
             json_data['code'] = -1
-            json_data['msg'] = e.args
+            json_data['errMsg'] = e.args
             return jsonify(json_data)
         finally:
             cursor.close()
@@ -286,7 +286,7 @@ class SongSheet(object):
             print(traceback.format_exc())
             json_data['code'] = -1
             json_data.pop('data')
-            json_data['msg'] = e.args
+            json_data['errMsg'] = e.args
             return jsonify(json_data)
 
     def __str__(self):
@@ -423,7 +423,7 @@ class Song(object):
             print(traceback.format_exc())
             json_data['code'] = -1
             json_data.pop('data')
-            json_data['msg'] = e.args
+            json_data['errMsg'] = e.args
             return jsonify(json_data)
 
     def __str__(self):

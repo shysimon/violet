@@ -115,7 +115,7 @@ def create_sheet():
     if sheet_name is None:
         return jsonify({
             'code': -1,
-            'msg': '缺少参数sheet_name'
+            'errMsg': '缺少参数sheet_name'
         })
     return SongSheet.create_sheet(sheet_name, user_id, sheet_img)
 
@@ -137,7 +137,7 @@ def delete_sheet():
     if sheet_id is None:
         return jsonify({
             'code': -1,
-            'msg': '缺少参数sheet_name'
+            'errMsg': '缺少参数sheet_name'
         })
     return SongSheet.delete_sheet(sheet_id, user_id)
 
@@ -161,12 +161,12 @@ def sheet_add_song():
     if sheet_id is None:
         return jsonify({
             'code': -1,
-            'msg': '缺少参数sheet_name'
+            'errMsg': '缺少参数sheet_name'
         })
     if song_id is None:
         return jsonify({
             'code': -1,
-            'msg': '缺少参数song_id'
+            'errMsg': '缺少参数song_id'
         })
     return SongSheet.sheet_add_song(sheet_id, song_id, user_id)
 
@@ -191,12 +191,12 @@ def sheet_delete_song():
     if sheet_id is None:
         return jsonify({
             'code': -1,
-            'msg': '缺少参数sheet_name'
+            'errMsg': '缺少参数sheet_name'
         })
     if song_id is None:
         return jsonify({
             'code': -1,
-            'msg': '缺少参数song_id'
+            'errMsg': '缺少参数song_id'
         })
     return SongSheet.sheet_delete_song(sheet_id, song_id, user_id)
 
@@ -277,7 +277,7 @@ def get_music163_url():
     if music163_id is None:
         return jsonify({
             'code': -1,
-            'msg': '缺少参数music163_id'
+            'errMsg': '缺少参数music163_id'
         })
     return jsonify({
             'code': 0,

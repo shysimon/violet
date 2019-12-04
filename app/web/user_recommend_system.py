@@ -54,7 +54,7 @@ def user_to_jsonify(users):
         print(traceback.format_exc())
         json_data['code'] = -1
         json_data.pop('data')
-        json_data['msg'] = e.args
+        json_data['errMsg'] = e.args
         return jsonify(json_data)
 
 

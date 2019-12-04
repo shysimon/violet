@@ -46,17 +46,17 @@ def load_comment():
     if user_id is None:
         return jsonify({
             'code': -1,
-            'msg': '缺少参数user_id'
+            'errMsg': '缺少参数user_id'
         })
     if item_type is None:
         return jsonify({
             'code': -1,
-            'msg': '缺少参数item_type'
+            'errMsg': '缺少参数item_type'
         })
     if item_id is None:
         return jsonify({
             'code': -1,
-            'msg': '缺少参数item_id'
+            'errMsg': '缺少参数item_id'
         })
 
     return Comment.comments_to_jsonify(Comment.load_comment(user_id, item_type, item_id))
@@ -76,28 +76,28 @@ def add_comment():
     content = '测试评论'
     {
     "code": 0,
-    "msg": "评论成功,comment_id:3"
+    "Msg": "评论成功,comment_id:3"
     }
     '''
     if user_id is None:
         return jsonify({
             'code': -1,
-            'msg': '缺少参数user_id'
+            'errMsg': '缺少参数user_id'
         })
     if item_type is None:
         return jsonify({
             'code': -1,
-            'msg': '缺少参数item_type'
+            'errMsg': '缺少参数item_type'
         })
     if item_id is None:
         return jsonify({
             'code': -1,
-            'msg': '缺少参数item_id'
+            'errMsg': '缺少参数item_id'
         })
     if content is None:
         return jsonify({
             'code': -1,
-            'msg': '缺少参数content'
+            'errMsg': '缺少参数content'
         })
 
     return Comment.add_comment(user_id, item_type, item_id, content)
@@ -113,18 +113,18 @@ def delete_comment():
     comment_id = 3
     {
     "code": 0,
-    "msg": "删除评论成功"
+    "Msg": "删除评论成功"
     }
     '''
     if user_id is None:
         return jsonify({
             'code': -1,
-            'msg': '缺少参数user_id'
+            'errMsg': '缺少参数user_id'
         })
     if comment_id is None:
         return jsonify({
             'code': -1,
-            'msg': '缺少参数comment_id'
+            'errMsg': '缺少参数comment_id'
         })
 
     return Comment.delete_comment(user_id, comment_id)
@@ -142,23 +142,23 @@ def modify_comment():
     content = '测试修改222'
     {
     "code": 0,
-    "msg": "修改评论成功"
+    "Msg": "修改评论成功"
     }
     '''
     if user_id is None:
         return jsonify({
             'code': -1,
-            'msg': '缺少参数user_id'
+            'errMsg': '缺少参数user_id'
         })
     if comment_id is None:
         return jsonify({
             'code': -1,
-            'msg': '缺少参数comment_id'
+            'errMsg': '缺少参数comment_id'
         })
     if content is None:
         return jsonify({
             'code': -1,
-            'msg': '缺少参数content'
+            'errMsg': '缺少参数content'
         })
 
     return Comment.modify_comment(user_id, comment_id, content)

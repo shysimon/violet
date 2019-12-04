@@ -55,7 +55,7 @@ def load_zone():
     if user_id is None:
         return jsonify({
             'code': -1,
-            'msg': '缺少参数user_id'
+            'errMsg': '缺少参数user_id'
         })
 
     return Zone.zones_to_jsonify(Zone.load_zone(user_id))
@@ -76,28 +76,28 @@ def add_zone():
     测试结果：
     {
     "code": 0,
-    "msg": "动态发送成功zone_id：5"
+    "Msg": "动态发送成功zone_id：5"
     }
     '''
     if user_id is None:
         return jsonify({
             'code': -1,
-            'msg': '缺少参数user_id'
+            'errMsg': '缺少参数user_id'
         })
     if content is None:
         return jsonify({
             'code': -1,
-            'msg': '缺少参数content'
+            'errMsg': '缺少参数content'
         })
     if item_type is None:
         return jsonify({
             'code': -1,
-            'msg': '缺少参数item_type'
+            'errMsg': '缺少参数item_type'
         })
     if item_id is None:
         return jsonify({
             'code': -1,
-            'msg': '缺少参数item_id'
+            'errMsg': '缺少参数item_id'
         })
 
     return Zone.add_zone(user_id, content, item_type, item_id)
@@ -114,19 +114,19 @@ def delete_zone():
     测试结果：
     {
     "code": 0,
-    "msg": "删除动态成功"
+    "Msg": "删除动态成功"
     }
     '''
 
     if user_id is None:
         return jsonify({
             'code': -1,
-            'msg': '缺少参数user_id'
+            'errMsg': '缺少参数user_id'
         })
     if zone_id is None:
         return jsonify({
             'code': -1,
-            'msg': '缺少参数zone_id'
+            'errMsg': '缺少参数zone_id'
         })
 
     return Zone.delete_zone(user_id, zone_id)
@@ -145,24 +145,24 @@ def modify_zone():
     测试结果：
     {
     "code": 0,
-    "msg": "动态修改成功"
+    "Msg": "动态修改成功"
     }
     '''
 
     if user_id is None:
         return jsonify({
             'code': -1,
-            'msg': '缺少参数user_id'
+            'errMsg': '缺少参数user_id'
         })
     if zone_id is None:
         return jsonify({
             'code': -1,
-            'msg': '缺少参数zone_id'
+            'errMsg': '缺少参数zone_id'
         })
     if content is None:
         return jsonify({
             'code': -1,
-            'msg': '缺少参数content'
+            'errMsg': '缺少参数content'
         })
 
     return Zone.modify_zone(user_id, zone_id, content)

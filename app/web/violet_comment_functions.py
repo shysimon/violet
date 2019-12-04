@@ -56,7 +56,7 @@ class Comment(object):
             print(traceback.format_exc())
             json_data['code'] = -1
             json_data.pop('data')
-            json_data['msg'] = e.args
+            json_data['errMsg'] = e.args
             return jsonify(json_data)
 
     @staticmethod
@@ -106,18 +106,13 @@ class Comment(object):
         cursor = conn.cursor()
 
         try:
-            sql = 'select max(comment_id) from vcomment'
-            cursor.execute(sql)
-            comment_id = cursor.fetchall()[0][0] + 1
-            thumbs_up_num = 0
-
-            sql = 'insert into vcomment(comment_id, user_id, item_type, item_id, content, thumbs_up_num) \
-                   values(%s, %s, %s, %s, %s, %s)'
-            cursor.execute(sql, [comment_id, user_id, item_type, item_id, content, thumbs_up_num])
+            sql = 'insert into vcomment(user_id, item_type, item_id, content, thumbs_up_num) \
+                   values(%s, %s, %s, %s, %s)'
+            cursor.execute(sql, [user_id, item_type, item_id, content, 0])
             conn.commit()
             return jsonify({
                 'code': 0,
-                'msg': '评论成功,comment_id:' + str(comment_id)
+                'Msg': '评论成功,comment_id:' + str(cursor.lastrowid)
             })
         except Exception as e:
             conn.rollback()
@@ -125,7 +120,7 @@ class Comment(object):
             print(traceback.format_exc())
             return jsonify({
                 'code': -1,
-                'msg': e.args
+                'errMsg': e.args
             })
         finally:
             cursor.close()
@@ -148,12 +143,12 @@ class Comment(object):
             if len(rows) == 0:
                 return jsonify({
                     'code': -1,
-                    'msg': '评论不存在'
+                    'errMsg': '评论不存在'
                 })
             if str(rows[0][0]) != str(user_id):
                 return jsonify({
                     'code': -1,
-                    'msg': '该评论属于user_id：' + str(rows[0][0])
+                    'errMsg': '该评论属于user_id：' + str(rows[0][0])
                 })
 
             sql = 'select type_id from symbol_table where type_name = %s'
@@ -162,7 +157,7 @@ class Comment(object):
             if len(rows) == 0:
                 return jsonify({
                     'code': -1,
-                    'msg': '不存在type_name：vcomment'
+                    'errMsg': '不存在type_name：vcomment'
                 })
             type_id = rows[0][0]
 
@@ -173,7 +168,7 @@ class Comment(object):
             conn.commit()
             return jsonify({
                 'code': 0,
-                'msg': '删除评论成功'
+                'Msg': '删除评论成功'
             })
         except Exception as e:
             conn.rollback()
@@ -181,7 +176,7 @@ class Comment(object):
             print(traceback.format_exc())
             return jsonify({
                 'code': -1,
-                'msg': e.args
+                'errMsg': e.args
             })
         finally:
             cursor.close()
@@ -205,12 +200,12 @@ class Comment(object):
             if len(rows) == 0:
                 return jsonify({
                     'code': -1,
-                    'msg': '评论不存在'
+                    'errMsg': '评论不存在'
                 })
             if str(rows[0][0]) != str(user_id):
                 return jsonify({
                     'code': -1,
-                    'msg': '该评论属于user_id：' + str(rows[0][0])
+                    'errMsg': '该评论属于user_id：' + str(rows[0][0])
                 })
 
             sql = 'update vcomment set content = %s where comment_id = %s'
@@ -218,7 +213,7 @@ class Comment(object):
             conn.commit()
             return jsonify({
                 'code': 0,
-                'msg': '修改评论成功'
+                'Msg': '修改评论成功'
             })
         except Exception as e:
             conn.rollback()
@@ -226,7 +221,7 @@ class Comment(object):
             print(traceback.format_exc())
             return jsonify({
                 'code': -1,
-                'msg': e.args
+                'errMsg': e.args
             })
         finally:
             cursor.close()

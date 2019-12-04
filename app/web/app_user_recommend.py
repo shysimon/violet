@@ -75,7 +75,7 @@ def recommend_user():
     if user_id is None:
         return jsonify({
             'code': -1,
-            'msg': '缺少参数user_id'
+            'errMsg': '缺少参数user_id'
         })
 
     recommender = UserRecommendSystem()

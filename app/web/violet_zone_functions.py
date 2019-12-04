@@ -59,7 +59,7 @@ class Zone(object):
             print(traceback.format_exc())
             json_data['code'] = -1
             json_data.pop('data')
-            json_data['msg'] = e.args
+            json_data['errMsg'] = e.args
             return jsonify(json_data)
 
     # TODO
@@ -124,7 +124,7 @@ class Zone(object):
             conn.commit()
             return jsonify({
                 'code': 0,
-                'msg': '动态发送成功zone_id：' + str(zone_id)
+                'Msg': '动态发送成功zone_id：' + str(zone_id)
             })
         except Exception as e:
             conn.rollback()
@@ -132,7 +132,7 @@ class Zone(object):
             print(traceback.format_exc())
             return jsonify({
                 'code': -1,
-                'msg': e.args
+                'errMsg': e.args
             })
         finally:
             cursor.close()
@@ -156,12 +156,12 @@ class Zone(object):
             if len(rows) == 0:
                 return jsonify({
                     'code': -1,
-                    'msg': '动态不存在'
+                    'errMsg': '动态不存在'
                 })
             if str(rows[0][0]) != str(user_id):
                 return jsonify({
                     'code': -1,
-                    'msg': '该评论属于user_id：' + str(rows[0][0])
+                    'errMsg': '该评论属于user_id：' + str(rows[0][0])
                 })
 
             sql = 'select type_id from symbol_table where type_name = %s'
@@ -170,7 +170,7 @@ class Zone(object):
             if len(rows) == 0:
                 return jsonify({
                     'code': -1,
-                    'msg': '不存在type_name：vzone'
+                    'errMsg': '不存在type_name：vzone'
                 })
             type_id = rows[0][0]
 
@@ -181,7 +181,7 @@ class Zone(object):
             conn.commit()
             return jsonify({
                 'code': 0,
-                'msg': '删除动态成功'
+                'Msg': '删除动态成功'
             })
         except Exception as e:
             conn.rollback()
@@ -189,7 +189,7 @@ class Zone(object):
             print(traceback.format_exc())
             return jsonify({
                 'code': -1,
-                'msg': e.args
+                'errMsg': e.args
             })
         finally:
             cursor.close()
@@ -214,12 +214,12 @@ class Zone(object):
             if len(rows) == 0:
                 return jsonify({
                     'code': -1,
-                    'msg': '动态不存在'
+                    'errMsg': '动态不存在'
                 })
             if str(rows[0][0]) != str(user_id):
                 return jsonify({
                     'code': -1,
-                    'msg': '该评论属于user_id：' + str(rows[0][0])
+                    'errMsg': '该评论属于user_id：' + str(rows[0][0])
                 })
 
             sql = 'update vzone \
@@ -229,7 +229,7 @@ class Zone(object):
             conn.commit()
             return jsonify({
                 'code': 0,
-                'msg': '动态修改成功'
+                'Msg': '动态修改成功'
             })
         except Exception as e:
             conn.rollback()
@@ -237,7 +237,7 @@ class Zone(object):
             print(traceback.format_exc())
             return jsonify({
                 'code': -1,
-                'msg': e.args
+                'errMsg': e.args
             })
         finally:
             cursor.close()

@@ -19,23 +19,23 @@ def like():
     测试结果：
     {
     "code": 0,
-    "msg": "点赞成功"
+    "Msg": "点赞成功"
     }
     '''
     if user_id is None:
         return jsonify({
             'code': -1,
-            'msg': '缺少参数user_id'
+            'errMsg': '缺少参数user_id'
         })
     if item_type is None:
         return jsonify({
             'code': -1,
-            'msg': '缺少参数item_type'
+            'errMsg': '缺少参数item_type'
         })
     if item_id is None:
         return jsonify({
             'code': -1,
-            'msg': '缺少参数item_id'
+            'errMsg': '缺少参数item_id'
         })
 
     return Thumbs.like(user_id, item_type, item_id)
@@ -54,23 +54,23 @@ def dislike():
     测试结果：
     {
     "code": 0,
-    "msg": "取消赞成功"
+    "Msg": "取消赞成功"
     }
     '''
     if user_id is None:
         return jsonify({
             'code': -1,
-            'msg': '缺少参数user_id'
+            'errMsg': '缺少参数user_id'
         })
     if item_type is None:
         return jsonify({
             'code': -1,
-            'msg': '缺少参数item_type'
+            'errMsg': '缺少参数item_type'
         })
     if item_id is None:
         return jsonify({
             'code': -1,
-            'msg': '缺少参数item_id'
+            'errMsg': '缺少参数item_id'
         })
 
     return Thumbs.dislike(user_id, item_type, item_id)

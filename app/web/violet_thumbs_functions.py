@@ -79,7 +79,7 @@ class Thumbs(object):
             if is_liked == True:
                 return jsonify({
                     'code': -1,
-                    'msg': '已存在点赞记录'
+                    'errMsg': '已存在点赞记录'
                 })
             if item_type == 1:
                 sql = 'update vsong set thumbs_up_num = thumbs_up_num + 1 where song_id = %s'
@@ -108,7 +108,7 @@ class Thumbs(object):
             conn.commit()
             return jsonify({
                 'code': 0,
-                'msg': '点赞成功'
+                'Msg': '点赞成功'
             })
         except Exception as e:
             conn.rollback()
@@ -116,7 +116,7 @@ class Thumbs(object):
             print(traceback.format_exc())
             return jsonify({
                 'code': -1,
-                'msg': e.args
+                'errMsg': e.args
             })
         finally:
             cursor.close()
@@ -141,7 +141,7 @@ class Thumbs(object):
             if is_liked == False:
                 return jsonify({
                     'code': -1,
-                    'msg': '不存在点赞记录'
+                    'errMsg': '不存在点赞记录'
                 })
 
             if item_type == 1:
@@ -169,7 +169,7 @@ class Thumbs(object):
             conn.commit()
             return jsonify({
                 'code': 0,
-                'msg': '取消赞成功'
+                'Msg': '取消赞成功'
             })
         except Exception as e:
             conn.rollback()
@@ -177,7 +177,7 @@ class Thumbs(object):
             print(traceback.format_exc())
             return jsonify({
                 'code': -1,
-                'msg': e.args
+                'errMsg': e.args
             })
         finally:
             cursor.close()

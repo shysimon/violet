@@ -29,7 +29,7 @@ def search_group():
     if keyword is None:
         return jsonify({
             'code': '-1',
-            'msg': '缺少参数keyword'
+            'errMsg': '缺少参数keyword'
         })
     return Group.search_group(keyword)
 
@@ -59,17 +59,17 @@ def add_group():
     if user_id is None:
         return jsonify({
             'code': -1,
-            'msg': '缺少参数owner'
+            'errMsg': '缺少参数owner'
         })
     if group_name is None:
         return jsonify({
             'code': -1,
-            'msg': '缺少参数group_name'
+            'errMsg': '缺少参数group_name'
         })
     if info is None:
         return jsonify({
             'code': -1,
-            'msg': '缺少参数info'
+            'errMsg': '缺少参数info'
         })
     return Group.add_group(user_id, group_name, info, thumbs_up_num=thumbs_up_num, follow_num=follow_num)
 
@@ -90,12 +90,12 @@ def delete_group():
     if user_id is None:
         return jsonify({
             'code': -1,
-            'msg': '缺少参数user_id'
+            'errMsg': '缺少参数user_id'
         })
     if group_id is None:
         return jsonify({
             'code': -1,
-            'msg': '缺少参数group_id'
+            'errMsg': '缺少参数group_id'
         })
     return Group.delete_group(group_id,user_id)
 
@@ -118,17 +118,17 @@ def invite_friend():
     if user_id is None:
         return jsonify({
             'code': -1,
-            'msg': '缺少参数user_id'
+            'errMsg': '缺少参数user_id'
         })
     if friend_id is None:
         return jsonify({
             'code': -1,
-            'msg': '缺少参数friend_id'
+            'errMsg': '缺少参数friend_id'
         })
     if group_id is None:
         return jsonify({
             'code': -1,
-            'msg': '缺少参数group_id'
+            'errMsg': '缺少参数group_id'
         })
     return Group.invite_user(friend_id, group_id)
 
@@ -148,12 +148,12 @@ def load_post():
     if user_id is None:
         return jsonify({
             'code': -1,
-            'msg': '缺少参数user_id'
+            'errMsg': '缺少参数user_id'
         })
     if group_id is None:
         return jsonify({
             'code': -1,
-            'msg': '缺少参数group_id'
+            'errMsg': '缺少参数group_id'
         })
     return Post.load_post(group_id, user_id)
 
@@ -182,22 +182,22 @@ def add_post():
     if user_id is None:
         return jsonify({
             'code': -1,
-            'msg': '缺少参数user_id'
+            'errMsg': '缺少参数user_id'
         })
     if group_id is None:
         return jsonify({
             'code': -1,
-            'msg': '缺少参数group_id'
+            'errMsg': '缺少参数group_id'
         })
     if post_title is None:
         return jsonify({
             'code': -1,
-            'msg': '缺少参数post_title'
+            'errMsg': '缺少参数post_title'
         })
     if content is None:
         return jsonify({
             'code': -1,
-            'msg': '缺少参数content'
+            'errMsg': '缺少参数content'
         })
     return Post.add_post(group_id, user_id, post_title, content, thumbs_up_num)
 
@@ -217,12 +217,12 @@ def delete_post():
     if user_id is None:
         return jsonify({
             'code': -1,
-            'msg': '缺少参数user_id'
+            'errMsg': '缺少参数user_id'
         })
     if post_id is None:
         return jsonify({
             'code': -1,
-            'msg': '缺少参数post_id'
+            'errMsg': '缺少参数post_id'
         })
     return Post.delete_post(post_id)
 
@@ -245,17 +245,17 @@ def modify_post():
     if user_id is None:
         return jsonify({
             'code': -1,
-            'msg': '缺少参数user_id'
+            'errMsg': '缺少参数user_id'
         })
     if post_id is None:
         return jsonify({
             'code': -1,
-            'msg': '缺少参数post_id'
+            'errMsg': '缺少参数post_id'
         })
     if new_content is None:
         return jsonify({
             'code': -1,
-            'msg': '缺少参数new_content'
+            'errMsg': '缺少参数new_content'
         })
     return Post.modify_post(post_id, new_content)
 
@@ -278,17 +278,17 @@ def search_post():
     if user_id is None:
         return jsonify({
             'code': -1,
-            'msg': '缺少参数user_id'
+            'errMsg': '缺少参数user_id'
         })
     if keyword is None:
         return jsonify({
             'code': -1,
-            'msg': '缺少参数keyword'
+            'errMsg': '缺少参数keyword'
         })
     if group_id is None:
         return jsonify({
             'code': -1,
-            'msg': '缺少参数group_id'
+            'errMsg': '缺少参数group_id'
         })
 
     return Post.search_post(keyword, group_id)

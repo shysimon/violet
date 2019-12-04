@@ -69,7 +69,7 @@ class Group(object):
         except BaseException as e:
             print(e.args)
             print(traceback.format_exc())
-            json_data['msg'] = e.args
+            json_data['errMsg'] = e.args
             return jsonify(json_data)
         finally:
             conn.close()
