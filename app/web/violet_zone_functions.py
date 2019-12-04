@@ -2,6 +2,7 @@ import pymysql
 import traceback
 from flask import jsonify
 from app.web.violet_thumbs_functions import Thumbs
+from app.lib.time_output import my_time_to_string
 
 user = 'violet'
 pwd = 'violetzjhnb'
@@ -26,7 +27,7 @@ class Zone(object):
         self.is_liked = is_liked
 
     def to_data(self):
-        data = {'zone_id': self.zone_id, 'user_id': self.user_id, 'create_time': self.create_time,
+        data = {'zone_id': self.zone_id, 'user_id': self.user_id, 'create_time': my_time_to_string(self.create_time),
                 'content': self.content, 'item_type': self.item_type, 'item_id': self.item_id,
                 'thumbs_up_num': self.thumbs_up_num, 'is_liked': self.is_liked}
         if data['user_id'] == 0:  # 表示是系统所有
