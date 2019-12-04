@@ -20,7 +20,11 @@ def searchUser():
                          password=current_app.config['PASSWORD'], port=current_app.config['PORT'],
                          database=current_app.config['DATABASE'], charset=current_app.config['CHARSET'])
     cursor = db.cursor()
-    sql = "SELECT * FROM vuser WHERE user_id = %s" % (request.args['uid'])
+    sql = ""
+    if request.form['uid'] is None:
+        sql = "SELECT * FROM vuser WHERE user_id = %s" % (session.get('user_id'))
+    else:
+        sql = "SELECT * FROM vuser WHERE user_id = %s" % (request.form['uid'])
     try:
         cursor.execute(sql)
         user = cursor.fetchone()
@@ -85,14 +89,14 @@ def follow():
     cursor = db.cursor()
 
     try:
-        user = get_user(request.args['toUserid'])
+        user = get_user(request.form['toUserid'])
         if user is None:
             return jsonify({
                 "code": "-1",
                 "errMsg": "关注用户不存在"
             })
         uid = session.get("user_id")
-        sql = "INSERT INTO vfollow(user_id,to_user_id) VALUES (%s,%s)" % (uid, request.args['toUserid'])
+        sql = "INSERT INTO vfollow(user_id,to_user_id) VALUES (%s,%s)" % (uid, request.form['toUserid'])
         cursor.execute(sql)
         db.commit()
         return jsonify({
@@ -118,7 +122,7 @@ def unfollow():
     cursor = db.cursor()
 
     try:
-        user = get_user(request.args['toUserid'])
+        user = get_user(request.form['toUserid'])
         if user is None:
             return jsonify({
                 "code": "-1",
@@ -126,7 +130,7 @@ def unfollow():
             })
         # uid = session.get("user_id")
         uid = session.get("user_id")
-        sql = "DELETE FROM vfollow WHERE user_id=%s and to_user_id = %s" % (uid, request.args['toUserid'])
+        sql = "DELETE FROM vfollow WHERE user_id=%s and to_user_id = %s" % (uid, request.form['toUserid'])
         cursor.execute(sql)
         db.commit()
         return jsonify({
@@ -153,11 +157,11 @@ def modifyUser():
     cursor = db.cursor()
     try:
         user = get_user(uid)
-        gender = request.args.get("gender", default=None)
-        nickname = request.args.get("nickname", default=None)
-        motto = request.args.get('motto', default=None)
-        info = request.args.get('info', default=None)
-        birthday = request.args.get('birthday', default=None)
+        gender = request.form.get("gender", default=None)
+        nickname = request.form.get("nickname", default=None)
+        motto = request.form.get('motto', default=None)
+        info = request.form.get('info', default=None)
+        birthday = request.form.get('birthday', default=None)
         if gender is not None:
             form = multidict.MultiDict([('gender', gender)])
             GForm = genderForm(form)
@@ -261,9 +265,9 @@ def birthReminder():
 @login_required
 def changePassword():
     uid = session.get("user_id")
-    passwordFrom = ResetPasswordForm(request.args)
+    passwordFrom = ResetPasswordForm(request.form)
     if passwordFrom.validate():
-        form = ResetPasswordForm(request.args)
+        form = ResetPasswordForm(request.form)
         if form.validate():
             new_password = form.data['password1']
             db = pymysql.connect(host=current_app.config['HOST'], user=current_app.config['USER'],

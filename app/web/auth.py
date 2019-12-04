@@ -11,7 +11,7 @@ from . import web
 
 @web.route('/v1/auth/register', methods=['POST'])
 def register():
-    form = RegisterForm(request.args)
+    form = RegisterForm(request.form)
     if form.validate():
         db = pymysql.connect(host=current_app.config['HOST'], user=current_app.config['USER'],
                              password=current_app.config['PASSWORD'], port=current_app.config['PORT'],
@@ -34,6 +34,7 @@ def register():
             db.rollback()
             return jsonify({
                 "code": "-1",
+                "msg": e.args,
                 "errMsg": "数据库操作失败"
             })
         finally:
@@ -51,7 +52,7 @@ def register():
 
 @web.route('/v1/auth/login', methods=['POST'])
 def login():
-    form = LoginForm(request.args)
+    form = LoginForm(request.form)
     if form.validate():
         db = pymysql.connect(host=current_app.config['HOST'], user=current_app.config['USER'],
                              password=current_app.config['PASSWORD'], port=current_app.config['PORT'],
@@ -80,6 +81,7 @@ def login():
         except Exception as e:
             return jsonify({
                 "code": "-1",
+                "msg": e.args,
                 "errMsg": "数据库操作错误"
             })
         finally:
@@ -94,7 +96,7 @@ def login():
 
 @web.route('/v1/auth/reset/password', methods=['POST'])
 def forget_password_request():
-    form = EmailForm(request.args)
+    form = EmailForm(request.form)
     if form.validate():
         account_email = form.email.data
         user = User.getUserByEmail(account_email)
@@ -117,7 +119,7 @@ def forget_password_request():
 
 @web.route('/v1/auth/reset/password/<token>', methods=['POST'])
 def forget_password(token):
-    form = ResetPasswordForm(request.args)
+    form = ResetPasswordForm(request.form)
     if form.validate():
         success = User.reset_password(token, form.password1.data)
         if success:

@@ -1,11 +1,13 @@
 from flask import Flask
 from flask_login import LoginManager
 from flask_mail import Mail
+from flask_cors import *
 
 login_manager = LoginManager()
 mail = Mail()
 def create_app():
     app = Flask(__name__)
+    CORS(app, supports_credentials=True)
     app.config.from_object("app.secure")
     register_blueprint(app)
 
