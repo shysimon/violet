@@ -207,7 +207,7 @@ def modifyUser():
 
 # 用户生日提醒/除了用户自己，还返回了关注该用户的用户数组，和该用户的生日
 # 这里的估计还有多少天到用户生日是粗略的，不顾问题不大
-@web.route("/v1/reminder/birth", methods=['POST'])
+@web.route("/v1/user/reminder/birth", methods=['POST'])
 @login_required
 def birthReminder():
     db = pymysql.connect(host=current_app.config['HOST'], user=current_app.config['USER'],
@@ -293,3 +293,37 @@ def changePassword():
                 db.close()
 
 
+@web.route("/v1/user/searchByName", methods=['post'])
+def searchByName():
+    db = pymysql.connect(host=current_app.config['HOST'], user=current_app.config['USER'],
+                         password=current_app.config['PASSWORD'], port=current_app.config['PORT'],
+                         database=current_app.config['DATABASE'], charset=current_app.config['CHARSET'])
+    cursor = db.cursor()
+
+    try:
+        nickname = request.args['nickname'].strip()
+        sql = "SELECT user_id FROM vuser WHERE  user_nickname LIKE  '%%%s%%'" % (nickname)
+        cursor.execute(sql)
+        userIdArray = cursor.fetchall()
+        userArray = []
+        for row in userIdArray:
+            id = row[0]
+            sql = "SELECT * FROM vuser WHERE user_id = %s" % (id)
+            cursor.execute(sql)
+            user = cursor.fetchone()
+            userObject = User()
+            userObject.set_attr(user)
+            userArray.append(userObject)
+
+        return jsonify({
+            "code": 200,
+            "userArray": json.loads(json.dumps(userArray, default=lambda o: o.__dict__)),
+        })
+
+    except:
+        return jsonify({
+            "code": -1,
+            "errMsg": "数据库操作失败"
+        })
+    finally:
+        db.close()
