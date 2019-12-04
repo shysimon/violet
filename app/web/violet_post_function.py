@@ -71,15 +71,18 @@ class Post(object):
             for post in result:
                 sql = 'select count(*) from vcomment where item_type = 4 and item_id = %s'
                 cursor.execute(sql, post['post_id'])
-                post['comment_num'] = cursor.fetchall()[0][0]
+                rows = cursor.fetchall()
+                count = rows[0]['count(*)']
+                post['comment_count'] = count
+
                 post_id = post['post_id']
                 is_liked = Thumbs.query_like(user_id, item_type, post_id)
                 post['is_liked'] = is_liked
                 post['create_time'] = my_time_to_string(post['create_time'])
                 post['recent_time'] = my_time_to_string(post['recent_time'])
-                sql = 'select user_nickname from vuser where user_id = %'
+                sql = 'select user_nickname from vuser where user_id = %s'
                 cursor.execute(sql, post['user_id'])
-                post['owner_nickname'] = cursor.fetchall()[0][0]
+                post['owner_nickname'] = cursor.fetchall()[0]['user_nickname']
             json_data['data'] = result
             json_data['code'] = 0
             print('success!')
@@ -237,15 +240,18 @@ class Post(object):
             for post in result:
                 sql = 'select count(*) from vcomment where item_type = 4 and item_id = %s'
                 cursor.execute(sql, post['post_id'])
-                post['comment_num'] = cursor.fetchall()[0][0]
+                rows = cursor.fetchall()
+                count = rows[0]['count(*)']
+                post['comment_count'] = count
+
                 post_id = post['post_id']
                 is_liked = Thumbs.query_like(user_id, item_type, post_id)
                 post['is_liked'] = is_liked
                 post['create_time'] = my_time_to_string(post['create_time'])
                 post['recent_time'] = my_time_to_string(post['recent_time'])
-                sql = 'select user_nickname from vuser where user_id = %'
+                sql = 'select user_nickname from vuser where user_id = %s'
                 cursor.execute(sql, post['user_id'])
-                post['owner_nickname'] = cursor.fetchall()[0][0]
+                post['owner_nickname'] = cursor.fetchall()[0]['user_nickname']
             json_data['data'] = result
             json_data['code'] = 0
             print('success!')

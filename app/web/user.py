@@ -30,6 +30,7 @@ def searchUser():
         user = cursor.fetchone()
         userObject = User()
         userObject.set_attr(user)
+        userObject.__dict__.pop('password')
         # u = userObject.__dict__
         return jsonify({
             "code": 200,
