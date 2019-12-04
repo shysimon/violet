@@ -281,7 +281,8 @@ def get_music163_url():
         })
     return jsonify({
             'code': 0,
-            'music163_url': get_url_from_music163(music163_id)
+            'url': get_url_from_music163(music163_id),
+            'lrc': get_lyric_from_music163(music163_id)
         })
 
 def get_url_from_music163(music163_id):
@@ -289,6 +290,12 @@ def get_url_from_music163(music163_id):
     params = {"id": music163_id, "br": 320000}
     r = requests.get(url, params)
     return r.json()['data'][0]['url']
+
+def get_lyric_from_music163(music163_id):
+    url = "http://shysimon.cn:3000/v1/lyric"
+    params = {"id": music163_id}
+    r = requests.get(url, params)
+    return r.json()['lrc']['lyric']
 
 
 # if __name__ == '__main__':
