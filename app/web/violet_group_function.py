@@ -77,7 +77,47 @@ class Group(object):
             cursor.close()
 
     @staticmethod
-    def add_group(user_id, group_name, info, thumbs_up_num=0, follow_num=0):
+    def load_group_top5(user_id):
+        '''
+        加载所有圈子
+        圈子按其关注人数从大到小排序
+        :return:返回一个json格式数据，格式如下：
+        {
+          'code'： 函数执行结果（0表示成功，-1表示失败）
+          'data': [{ group_id: 圈子id，
+                group_name: 圈子名称
+                create_time: 创建时间
+                info: 圈子简介
+                thumbs_up_num: 圈子点赞数
+                follow_num: 圈子关注人数
+                user_id: 圈子创建者id]}
+        }
+        '''
+        cursor, conn = get_connection()
+        json_data = dict()
+        json_data['code'] = -1
+        json_data['data'] = ['failed to load group']
+        try:
+            sql = 'select * from vgroup order by follow_num desc limit 5'
+            cursor.execute(sql)
+            result = cursor.fetchall()
+            json_data['data'] = []
+            for group in result:
+                json_data['data'].append(Group.result_to_data(group, cursor, user_id))
+            json_data['code'] = 0
+            print('success!')
+            return jsonify(json_data)
+        except BaseException as e:
+            print(e.args)
+            print(traceback.format_exc())
+            json_data['errMsg'] = e.args
+            return jsonify(json_data)
+        finally:
+            conn.close()
+            cursor.close()
+
+    @staticmethod
+    def add_group(user_id, group_name, info, thumbs_up_num=0, follow_num=1):
         '''
         创建圈子
         :param user_id: 创建者id
@@ -106,6 +146,8 @@ class Group(object):
                   ' (%s, %s, %s, %s, %s, %s)'
             cursor.execute(sql, [user_id, group_name, datetime.now().strftime('%Y-%m-%d %H:%M:%S'), info, thumbs_up_num,
                                  follow_num])
+            sql = 'insert into violet.user_group(user_id, group_id) values(%s,%s)'
+            cursor.execute(sql, (user_id, cursor.lastrowid))
             json_data['code'] = 0
             json_data['data'] = '添加圈子成功'
             print('success!')

@@ -77,7 +77,7 @@ class SongSheet(object):
     def query_by_owner(owner):
         conn = get_conn()
         cursor = conn.cursor()
-        sql = 'select sheet_id, sheet_name, owner, sheet_img, play_times, info, thumbs_up_num, follow_num from vsongsheet where owner = %s'
+        sql = 'select sheet_id, sheet_name, owner, sheet_img, play_times, info, thumbs_up_num, follow_num from vsongsheet where owner = %s order by play_times desc'
         cursor.execute(sql, owner)
         rows = cursor.fetchall()
         song_sheets = []
@@ -92,7 +92,7 @@ class SongSheet(object):
     def query_by_name(name):
         conn = get_conn()
         cursor = conn.cursor()
-        sql = 'select sheet_id, sheet_name, owner, sheet_img, play_times, info, thumbs_up_num, follow_num from vsongsheet where sheet_name like %s'
+        sql = 'select sheet_id, sheet_name, owner, sheet_img, play_times, info, thumbs_up_num, follow_num from vsongsheet where sheet_name like %s order by play_times desc'
         cursor.execute(sql, '%' + name + '%')
         rows = cursor.fetchall()
         song_sheets = []
@@ -107,7 +107,7 @@ class SongSheet(object):
     def query_all():
         conn = get_conn()
         cursor = conn.cursor()
-        sql = 'select sheet_id, sheet_name, owner, sheet_img, play_times, info, thumbs_up_num, follow_num from vsongsheet'
+        sql = 'select sheet_id, sheet_name, owner, sheet_img, play_times, info, thumbs_up_num, follow_num from vsongsheet order by play_times desc'
         cursor.execute(sql)
         rows = cursor.fetchall()
         song_sheets = []
@@ -128,7 +128,7 @@ class SongSheet(object):
         sheet_ids = []
         for row in rows:
             sheet_ids.append(row[0])
-        sql = 'select sheet_id, sheet_name, owner, sheet_img, play_times, info, thumbs_up_num, follow_num from vsongsheet where sheet_id = %s'
+        sql = 'select sheet_id, sheet_name, owner, sheet_img, play_times, info, thumbs_up_num, follow_num from vsongsheet where sheet_id = %s order by play_times desc'
         song_sheets = []
         for i in sheet_ids:
             cursor.execute(sql, i)
@@ -311,7 +311,7 @@ class SongSheet(object):
         try:
             json_data['code'] = 0
 
-            if len(sheets)!=1:
+            if len(sheets) != 1:
                 json_data['code'] = -1
                 json_data['errMsg'] = '没有该歌单'
                 return jsonify(json_data)
@@ -334,6 +334,21 @@ class SongSheet(object):
 
     def __str__(self):
         return "sheet_id:{} owner:{} sheet_name:{}".format(self.sheet_id, self.owner, self.sheet_name)
+
+    @staticmethod
+    def query_top10():
+        conn = get_conn()
+        cursor = conn.cursor()
+        sql = 'select sheet_id, sheet_name, owner, sheet_img, play_times, info, thumbs_up_num, follow_num from vsongsheet order by play_times desc limit 10'
+        cursor.execute(sql)
+        rows = cursor.fetchall()
+        song_sheets = []
+        for row in rows:
+            song_sheets.append(SongSheet(row[0], row[1], row[2], row[3], row[4], row[5], row[6], row[7]))
+        cursor.close()
+        conn.close()
+        print('SongSheet.query_all() success')
+        return song_sheets
 
 
 class Song(object):

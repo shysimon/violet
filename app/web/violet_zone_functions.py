@@ -100,6 +100,37 @@ class Zone(object):
         return zones
 
     @staticmethod
+    def load_zone_top3(user_id):
+        '''
+        获取用户动态列表--->最新的动态最先
+        SQL嵌套关系：获取当前用户所关注的用户->获取关注的用户所发的动态    *注：用户默认关注自己，由此获取自身所发的动态
+        :param user_id: 获取动态的用户id
+        :return: 返回一个列表，列表长度为0则表示无动态。列表的每一项为一个字典类型，作为一条动态记录。
+        '''
+        conn = get_conn()
+        cursor = conn.cursor()
+
+        # 过一天权重扣10赞
+        sql = 'select zone_id, user_id, create_time, content, item_type, item_id, thumbs_up_num from vzone order by thumbs_up_num + unix_timestamp(create_time) / 8640 DESC limit 3'
+
+        cursor.execute(sql)
+        rows = cursor.fetchall()
+
+        zones = []
+        for row in rows:
+            zone_id = row[0]
+            item_type = 6  # vzone类型
+            is_liked = Thumbs.query_like(user_id, item_type, zone_id)
+            zones.append(Zone(zone_id=zone_id, user_id=row[1], create_time=row[2],
+                              content=row[3], item_type=row[4], item_id=row[5],
+                              thumbs_up_num=row[6], is_liked=is_liked))
+
+        cursor.close()
+        conn.close()
+
+        return zones
+
+    @staticmethod
     def add_zone(user_id, content, item_type, item_id):
         '''
         发一条新的动态

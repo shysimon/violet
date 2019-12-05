@@ -61,6 +61,16 @@ def all_sheets():
     return SongSheet.sheets_to_jsonify(user_id, SongSheet.query_all())
 
 
+# 读取主页排前十歌单信息
+# 无参数
+@web.route('/v1/sheet/index_sheets', methods=['GET', 'POST'])
+def index_sheets():
+    user_id = session.get("user_id")
+    if user_id is None:
+        user_id = 0
+    return SongSheet.sheets_to_jsonify(user_id, SongSheet.query_top10())
+
+
 # 搜索属于某user的歌单信息
 @web.route('/v1/sheet/sheets_by_id', methods=['GET', 'POST'])
 def sheets_by_id():
@@ -117,8 +127,13 @@ def sheets_by_name():
 @web.route('/v1/sheet/sheets_by_user', methods=['GET', 'POST'])
 # @login_required
 def sheets_by_user():
-    user_id = session.get("user_id")
-    return SongSheet.sheets_to_jsonify(user_id, SongSheet.query_by_user(user_id))
+    user_id = session.get('user_id')
+    if user_id is None:
+        user_id = 0
+    q_user_id = request.form.get('user_id')
+    if q_user_id is None:
+        q_user_id = 0
+    return SongSheet.sheets_to_jsonify(user_id, SongSheet.query_by_user(q_user_id))
 
 
 # 创建歌单
@@ -224,6 +239,8 @@ def sheet_delete_song():
             'errMsg': '缺少参数song_id'
         })
     return SongSheet.sheet_delete_song(sheet_id, song_id, user_id)
+
+
 
 
 # 读取所有歌曲信息

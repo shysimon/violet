@@ -86,6 +86,56 @@ class Post(object):
             cursor.close()
 
     @staticmethod
+    def load_post_top5(user_id):
+        '''
+        加载指定圈子下所有帖子
+        帖子按其最新评论时间排序
+        :param group_id:
+        :return:返回json格式数据，格式如下:
+        { 'code': 返回函数执行情况（0表示成功，-1表示失败）
+          'data':[{
+    `           'post_id': 帖子id
+                'group_id': 隶属圈子id
+                'user_id': 帖子创建者id
+                'post_title': 帖子标题
+                'content': 帖子内容
+                'create_time': 创建时间
+                'recent_time': 最新评论时间
+                'thumbs_up_num': 点赞数
+          }]
+        }
+        '''
+        cursor, conn = get_connection()
+        json_data = dict()
+        json_data['code'] = -1
+        json_data['data'] = []
+        try:
+            post_ids = []
+            sql = 'select item_id from vcomment where item_type = 4 group by item_id order by count(*) desc limit 5'
+            cursor.execute(sql)
+            for row in cursor.fetchall():
+                post_ids.append(row['item_id'])
+            for post_id in post_ids:
+                sql = 'select * from vpost where post_id = %s'
+                cursor.execute(sql, post_id)
+                result = cursor.fetchall()
+                post = result[0]
+                json_data['data'].append(Post.result_to_data(post, cursor, user_id))
+            json_data['code'] = 0
+            print('success!')
+            return jsonify(json_data)
+        except BaseException as e:
+            conn.rollback()
+            json_data['data'] = e.args
+            print(e.args)
+            print(traceback.format_exc())
+            return jsonify(json_data)
+        finally:
+            conn.commit()
+            conn.close()
+            cursor.close()
+
+    @staticmethod
     def add_post(group_id, user_id, post_title, content, thumbs_up_num=0):
         '''
         在指定圈子下发帖

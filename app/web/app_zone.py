@@ -61,6 +61,15 @@ def load_zone():
     return Zone.zones_to_jsonify(Zone.load_zone(user_id))
 
 
+@web.route('/v1/zone/index_zones', methods=['POST'])
+def index_zones():
+    user_id = session.get('user_id')
+    if user_id is None:
+        user_id = 0
+
+    return Zone.zones_to_jsonify(Zone.load_zone_top3(user_id))
+
+
 @web.route('/v1/zone/add_zone', methods=['POST'])
 def add_zone():
     user_id = session.get('user_id')

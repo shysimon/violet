@@ -20,6 +20,14 @@ def load_group():
     return Group.load_group(user_id)
 
 
+@web.route('/v1/group/index_groups', methods=['POST', 'GET'])
+def index_groups():
+    user_id = session.get('user_id')
+    if user_id is None:
+        user_id = 0
+    return Group.load_group_top5(user_id)
+
+
 @web.route('/v1/group/load_group_by_id', methods=['POST', 'GET'])
 def load_group_by_id():
     user_id = session.get('user_id')
@@ -174,6 +182,13 @@ def load_post():
             'errMsg': '缺少参数group_id'
         })
     return Post.load_post(group_id, user_id)
+
+@web.route('/v1/post/index_posts', methods=['POST', 'GET'])
+def index_posts():
+    user_id = session.get('user_id')
+    if user_id is None:
+        user_id = 0
+    return Post.load_post_top5(user_id)
 
 
 @web.route('/v1/post/add_post', methods=['POST', 'GET'])
