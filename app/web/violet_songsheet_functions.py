@@ -35,6 +35,7 @@ class SongSheet(object):
         sql = 'select count(*) from vcomment where item_type = 2 and item_id = %s'
         cursor.execute(sql, res['sheet_id'])
         res['comment_count'] = cursor.fetchall()[0][0]
+        res['owner_id'] = res['owner']
         if res['owner'] == 0:
             res['owner'] = '专辑'
         else:
