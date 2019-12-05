@@ -299,6 +299,10 @@ class Post(object):
         count = rows[0]['count(*)']
         post['comment_count'] = count
 
+        sql = 'select group_name from vgroup where group_id = %s'
+        cursor.execute(sql, post['group_id'])
+        post['group_name'] = cursor.fetchall()[0]['group_name']
+
         post_id = post['post_id']
         is_liked = Thumbs.query_like(user_id, 4, post_id)
         post['is_liked'] = is_liked
