@@ -501,11 +501,12 @@ class Song(object):
         cursor.execute(sql, sheet163_id)
         rows = cursor.fetchall()
         sheet_id = 0
+        # print(len(rows))
         if len(rows) == 1:
             sheet_id = rows[0][0]
         else:
             sql = 'insert into vsongsheet(sheet_name, owner, sheet_img, play_times, thumbs_up_num, follow_num, sheet163_id) values(%s,0,%s,0,0,0,%s)'
-            cursor.execute(sql, (indict['al']['name'], indict['al']['picUrl'], singer163_id))
+            cursor.execute(sql, (indict['al']['name'], indict['al']['picUrl'], sheet163_id))
             sheet_id = cursor.lastrowid
         sql = 'insert into vsong(song_name, song_album, song_img, play_times, thumbs_up_num, music163_id, song_dt) values(%s,%s,%s,0,0,%s,%s)'
         cursor.execute(sql, (indict['name'], sheet_id, indict['al']['picUrl'], music163_id, indict['dt']))
