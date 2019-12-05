@@ -183,6 +183,28 @@ def load_post():
         })
     return Post.load_post(group_id, user_id)
 
+@web.route('/v1/post/load_post_by_id', methods=['POST', 'GET'])
+def load_post_by_id():
+    user_id = None
+    post_id = None
+    if request.method == 'POST':
+        user_id = session.get('user_id')
+        post_id = request.form.get('post_id')
+    if request.method == 'GET':
+        user_id = session.get('user_id')
+        post_id = request.args.get('post_id')
+    if user_id is None:
+        return jsonify({
+            'code': -1,
+            'errMsg': '缺少参数user_id'
+        })
+    if post_id is None:
+        return jsonify({
+            'code': -1,
+            'errMsg': '缺少参数group_id'
+        })
+    return Post.load_post_by_id(post_id, user_id)
+
 @web.route('/v1/post/index_posts', methods=['POST', 'GET'])
 def index_posts():
     user_id = session.get('user_id')
@@ -227,6 +249,8 @@ def add_post():
             'code': -1,
             'errMsg': '缺少参数post_title'
         })
+    if thumbs_up_num is None:
+        thumbs_up_num = 0
     if content is None:
         return jsonify({
             'code': -1,

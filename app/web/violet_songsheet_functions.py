@@ -416,7 +416,7 @@ class Song(object):
     def query_by_name(name):
         conn = get_conn()
         cursor = conn.cursor()
-        sql = 'select song_id, song_name, song_img, play_times, thumbs_up_num, song_album, music163_id, song_dt from vsong where song_name like %s'
+        sql = 'select song_id, song_name, song_img, play_times, thumbs_up_num, song_album, music163_id, song_dt from vsong where song_name like %s order by LENGTH(song_name)'
         cursor.execute(sql, '%' + name + '%')
         rows = cursor.fetchall()
         songs = []
