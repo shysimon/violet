@@ -17,6 +17,20 @@ def load_group():
     return Group.load_group()
 
 
+@web.route('/v1/group/load_group_by_id', methods=['POST', 'GET'])
+def load_group_by_id():
+    user_id = session.get('user_id')
+    if user_id is None:
+        user_id = 0
+    group_id = request.form.get('group_id')
+    if group_id is None:
+        return jsonify({
+            'code': '-1',
+            'errMsg': '缺少参数group_id'
+        })
+    return Group.load_group_by_id(group_id, user_id)
+
+
 @web.route('/v1/group/search_group', methods=['POST', 'GET'])
 def search_group():
     keyword = None
@@ -294,3 +308,4 @@ def search_post():
 
 # if __name__ == '__main__':
 #     app.run()
+#

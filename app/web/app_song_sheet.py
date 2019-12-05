@@ -53,12 +53,32 @@ from app.web.violet_songsheet_functions import SongSheet, Song
 
 # 读取所有歌单信息
 # 无参数
-@web.route('/v1/sheet/all_sheets')
+@web.route('/v1/sheet/all_sheets', methods=['GET', 'POST'])
 def all_sheets():
     user_id = session.get("user_id")
     if user_id is None:
         user_id = 0
     return SongSheet.sheets_to_jsonify(user_id, SongSheet.query_all())
+
+
+# 搜索属于某user的歌单信息
+@web.route('/v1/sheet/sheets_by_id', methods=['GET', 'POST'])
+def sheets_by_id():
+    user_id = session.get("user_id")
+    if user_id is None:
+        user_id = 0
+    sheet_id = None
+    if request.method == 'POST':
+        sheet_id = request.form.get('sheet_id')
+    if request.method == 'GET':
+        sheet_id = request.args.get('sheet_id')
+    if sheet_id is None:
+        return jsonify({
+            'code': -1,
+            'errMsg': '缺少参数sheet_id'
+        })
+    return SongSheet.sheets_details_to_jsonify(user_id, SongSheet.query_by_id(sheet_id),
+                                               Song.query_by_sheet(sheet_id))
 
 
 # 搜索属于某user的歌单信息
@@ -137,7 +157,7 @@ def delete_sheet():
     if sheet_id is None:
         return jsonify({
             'code': -1,
-            'errMsg': '缺少参数sheet_name'
+            'errMsg': '缺少参数sheet_id'
         })
     return SongSheet.delete_sheet(sheet_id, user_id)
 
@@ -267,6 +287,7 @@ def songs_by_sheet():
         return all_songs()
     return Song.songs_to_jsonify(user_id, Song.query_by_sheet(sheet_id))
 
+
 @web.route('/v1/song/geturl', methods=['GET', 'POST'])
 def get_music163_url():
     music163_id = None
@@ -280,10 +301,11 @@ def get_music163_url():
             'errMsg': '缺少参数music163_id'
         })
     return jsonify({
-            'code': 0,
-            'url': get_url_from_music163(music163_id),
-            'lrc': get_lyric_from_music163(music163_id)
-        })
+        'code': 0,
+        'url': get_url_from_music163(music163_id),
+        'lrc': get_lyric_from_music163(music163_id)
+    })
+
 
 def get_url_from_music163(music163_id):
     url = "http://shysimon.cn:3000/v1/music/url"
@@ -291,12 +313,12 @@ def get_url_from_music163(music163_id):
     r = requests.get(url, params)
     return r.json()['data'][0]['url']
 
+
 def get_lyric_from_music163(music163_id):
     url = "http://shysimon.cn:3000/v1/lyric"
     params = {"id": music163_id}
     r = requests.get(url, params)
     return r.json()['lrc']['lyric']
-
 
 # if __name__ == '__main__':
 #     app.run()

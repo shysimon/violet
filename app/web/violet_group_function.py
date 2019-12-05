@@ -3,6 +3,7 @@ from datetime import datetime
 import traceback
 from flask import jsonify
 from app.lib.time_output import my_time_to_string
+from app.web.violet_post_function import Post
 
 
 def get_connection():
@@ -98,7 +99,7 @@ class Group(object):
             if cursor.execute(sql) > 0:
                 print('the group name is occupied')
                 json_data['data'] = '该圈子名已被占用'
-                return json_data
+                return jsonify(json_data)
             sql = 'insert into vgroup' \
                   '(user_id,group_name,create_time,info,thumbs_up_num,follow_num)' \
                   ' values' \
@@ -181,7 +182,7 @@ class Group(object):
             if cursor.execute(sql, [friend_id, group_id]) > 0:
                 print('your friend has already followed this group')
                 json_data['data'] = '好友已在该圈子中'
-                return json_data
+                return jsonify(json_data)
             sql = 'insert into user_group(user_id,group_id) values (%s, %s)'
             cursor.execute(sql, [friend_id, group_id])
             json_data['code'] = 0
@@ -225,6 +226,8 @@ class Group(object):
             sql = 'select * from vgroup where group_name like "%' + str(keyword) + '%" order by follow_num desc'
             cursor.execute(sql)
             result = cursor.fetchall()
+            for i in result:
+                i['create_time'] = my_time_to_string(i['create_time'])
             json_data['code'] = 0
             json_data['data'] = result
             print('success!')
@@ -233,13 +236,69 @@ class Group(object):
             conn.rollback()
             print(e.args)
             print(traceback.format_exc())
-            json_data['data'] = e.args
+            json_data['errMsg'] = e.args
             return jsonify(json_data)
         finally:
             conn.commit()
             conn.close()
             cursor.close()
 
+    @staticmethod
+    def load_group_by_id(group_id, user_id):
+        '''
+        加载指定圈子下所有帖子
+        帖子按其最新评论时间排序
+        :param group_id:
+        :return:返回json格式数据，格式如下:
+        { 'code': 返回函数执行情况（0表示成功，-1表示失败）
+          'data':[{
+    `           'post_id': 帖子id
+                'group_id': 隶属圈子id
+                'user_id': 帖子创建者id
+                'post_title': 帖子标题
+                'content': 帖子内容
+                'create_time': 创建时间
+                'recent_time': 最新评论时间
+                'thumbs_up_num': 点赞数
+          }]
+        }
+        '''
+        cursor, conn = get_connection()
+        json_data = dict()
+        json_data['code'] = -1
+        json_data['data'] = []
+        try:
+            sql = 'select * from vgroup where group_id = %s'
+            cursor.execute(sql, group_id)
+            result = cursor.fetchall()
+
+            if len(result) != 1:
+                json_data['errMsg'] = 'group不存在'
+                return jsonify(json_data)
+
+            for i in result:
+                i['create_time'] = my_time_to_string(i['create_time'])
+            json_data['code'] = 0
+            json_data['data'] = result
+
+            sql = 'select * from vpost where group_id = %s order by recent_time desc '
+            cursor.execute(sql, [group_id])
+            posts = cursor.fetchall()
+            json_data['posts'] = []
+            for post in posts:
+                json_data['data'].append(Post.result_to_data(post, cursor, user_id))
+            print('success!')
+            return jsonify(json_data)
+        except BaseException as e:
+            conn.rollback()
+            json_data['errMsg'] = e.args
+            print(e.args)
+            print(traceback.format_exc())
+            return jsonify(json_data)
+        finally:
+            conn.commit()
+            conn.close()
+            cursor.close()
 # if __name__ == '__main__':
 #     print('hello world')
 # data = search_group('group')

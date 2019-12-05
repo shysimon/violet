@@ -58,6 +58,22 @@ class SongSheet(object):
         return res
 
     @staticmethod
+    def query_by_id(sheet_id):
+        conn = get_conn()
+        cursor = conn.cursor()
+        sql = 'select sheet_id, sheet_name, owner, sheet_img, play_times, info, thumbs_up_num, follow_num from vsongsheet where sheet_id = %s'
+        cursor.execute(sql, sheet_id)
+        rows = cursor.fetchall()
+        song_sheets = []
+        for row in rows:
+            song_sheets.append(SongSheet(row[0], row[1], row[2], row[3], row[4], row[5], row[6], row[7]))
+        cursor.close()
+        conn.close()
+        if len(song_sheets) == 1:
+            print('SongSheet.query_by_id() success')
+        return song_sheets
+
+    @staticmethod
     def query_by_owner(owner):
         conn = get_conn()
         cursor = conn.cursor()
@@ -280,6 +296,33 @@ class SongSheet(object):
             json_data['data'] = []
             for sheet in sheets:
                 json_data['data'].append(sheet.to_data(uid))
+            return jsonify(json_data)
+        except Exception as e:
+            print(e.args)
+            print(traceback.format_exc())
+            json_data['code'] = -1
+            json_data.pop('data')
+            json_data['errMsg'] = e.args
+            return jsonify(json_data)
+
+    @staticmethod
+    def sheets_details_to_jsonify(user_id, sheets, songs):
+        json_data = dict()
+        try:
+            json_data['code'] = 0
+
+            if len(sheets)!=1:
+                json_data['code'] = -1
+                json_data['errMsg'] = '没有该歌单'
+                return jsonify(json_data)
+
+            json_data['data'] = []
+            for sheet in sheets:
+                json_data['data'].append(sheet.to_data(user_id))
+
+            json_data['songs'] = []
+            for song in songs:
+                json_data['songs'].append(song.to_data(user_id))
             return jsonify(json_data)
         except Exception as e:
             print(e.args)
