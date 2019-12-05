@@ -86,8 +86,13 @@ def sheets_by_id():
 @web.route('/v1/sheet/sheets_by_owner', methods=['GET', 'POST'])
 # @login_required
 def sheets_by_owner():
-    user_id = session.get("user_id")
-    return SongSheet.sheets_to_jsonify(user_id, SongSheet.query_by_owner(user_id))
+    user_id = session.get('user_id')
+    if user_id is None:
+        user_id = 0
+    owner = request.form.get('user_id')
+    if owner is None:
+        owner = 0
+    return SongSheet.sheets_to_jsonify(user_id, SongSheet.query_by_owner(owner))
 
 
 # 通过歌单名词模糊搜索歌单
