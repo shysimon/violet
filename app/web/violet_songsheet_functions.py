@@ -536,3 +536,15 @@ class Song(object):
         conn.commit()
         cursor.close()
         conn.close()
+
+    @staticmethod
+    def play(song_id):
+        conn = get_conn()
+        cursor = conn.cursor()
+        sql = 'update vsong set play_times = play_times + 1 where song_id = %s'
+        cursor.execute(sql, song_id)
+        sql = 'update vsongsheet set play_times = play_times + 1 where sheet_id in (select sheet_id from song_songsheet where song_id = %s)'
+        cursor.execute(sql, song_id)
+        conn.commit()
+        cursor.close()
+        conn.close()

@@ -323,6 +323,13 @@ def get_music163_url():
             'code': -1,
             'errMsg': '缺少参数music163_id'
         })
+    song_id = request.form.get('song_id')
+    if song_id is None:
+        return jsonify({
+            'code': -1,
+            'errMsg': '缺少参数song_id'
+        })
+    Song.play(song_id)
     return jsonify({
         'code': 0,
         'url': get_url_from_music163(music163_id),
