@@ -37,7 +37,7 @@ class Group(object):
         self.user_id = user_id
 
     @staticmethod
-    def load_group():
+    def load_group(user_id):
         '''
         加载所有圈子
         圈子按其关注人数从大到小排序
@@ -61,10 +61,10 @@ class Group(object):
             sql = 'select * from vgroup order by follow_num desc'
             cursor.execute(sql)
             result = cursor.fetchall()
-            for i in result:
-                i['create_time'] = my_time_to_string(i['create_time'])
+            json_data['data'] = []
+            for group in result:
+                json_data['data'].append(Group.result_to_data(group, cursor, user_id))
             json_data['code'] = 0
-            json_data['data'] = result
             print('success!')
             return jsonify(json_data)
         except BaseException as e:
@@ -201,7 +201,7 @@ class Group(object):
             cursor.close()
 
     @staticmethod
-    def search_group(keyword):
+    def search_group(keyword, user_id):
         '''
         搜索圈子
         暂时只支持按名称搜索
@@ -226,10 +226,10 @@ class Group(object):
             sql = 'select * from vgroup where group_name like "%' + str(keyword) + '%" order by follow_num desc'
             cursor.execute(sql)
             result = cursor.fetchall()
-            for i in result:
-                i['create_time'] = my_time_to_string(i['create_time'])
+            json_data['data'] = []
+            for group in result:
+                json_data['data'].append(Group.result_to_data(group, cursor, user_id))
             json_data['code'] = 0
-            json_data['data'] = result
             print('success!')
             return jsonify(json_data)
         except BaseException as e:
@@ -276,17 +276,17 @@ class Group(object):
                 json_data['errMsg'] = 'group不存在'
                 return jsonify(json_data)
 
-            for i in result:
-                i['create_time'] = my_time_to_string(i['create_time'])
+            json_data['data'] = []
+            for group in result:
+                json_data['data'].append(Group.result_to_data(group, cursor, user_id))
             json_data['code'] = 0
-            json_data['data'] = result
 
             sql = 'select * from vpost where group_id = %s order by recent_time desc '
             cursor.execute(sql, [group_id])
             posts = cursor.fetchall()
             json_data['posts'] = []
             for post in posts:
-                json_data['data'].append(Post.result_to_data(post, cursor, user_id))
+                json_data['posts'].append(Post.result_to_data(post, cursor, user_id))
             print('success!')
             return jsonify(json_data)
         except BaseException as e:
@@ -299,6 +299,14 @@ class Group(object):
             conn.commit()
             conn.close()
             cursor.close()
+
+    @staticmethod
+    def result_to_data(group, cursor, user_id):
+        group['create_time'] = my_time_to_string(group['create_time'])
+        sql = 'select * from violet.user_group where user_id = %s and group_id =%s'
+        cursor.execute(sql, (user_id, group['group_id']))
+        group['is_joined'] = len(cursor.fetchall()) == 1
+        return group
 # if __name__ == '__main__':
 #     print('hello world')
 # data = search_group('group')

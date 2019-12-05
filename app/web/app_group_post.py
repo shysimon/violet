@@ -14,7 +14,10 @@ from . import web
 
 @web.route('/v1/group/load_group', methods=['POST', 'GET'])
 def load_group():
-    return Group.load_group()
+    user_id = session.get('user_id')
+    if user_id is None:
+        user_id = 0
+    return Group.load_group(user_id)
 
 
 @web.route('/v1/group/load_group_by_id', methods=['POST', 'GET'])
@@ -34,7 +37,9 @@ def load_group_by_id():
 @web.route('/v1/group/search_group', methods=['POST', 'GET'])
 def search_group():
     keyword = None
-
+    user_id = session.get('user_id')
+    if user_id is None:
+        user_id = 0
     if request.method == 'POST':
         # user_id = 1
         keyword = request.form.get('keyword')
@@ -46,7 +51,7 @@ def search_group():
             'code': '-1',
             'errMsg': '缺少参数keyword'
         })
-    return Group.search_group(keyword)
+    return Group.search_group(keyword, user_id)
 
 
 @web.route('/v1/group/add_group', methods=['POST', 'GET'])
@@ -289,10 +294,11 @@ def search_post():
         keyword = request.args.get('keyword')
         group_id = request.args.get('group_id')
     if user_id is None:
-        return jsonify({
-            'code': -1,
-            'errMsg': '缺少参数user_id'
-        })
+        user_id = 0
+        # return jsonify({
+        #     'code': -1,
+        #     'errMsg': '缺少参数user_id'
+        # })
     if keyword is None:
         return jsonify({
             'code': -1,
