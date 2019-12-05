@@ -104,10 +104,11 @@ class SongSheet(object):
         return song_sheets
 
     @staticmethod
-    def query_all():
+    def query_all(limit=50):
         conn = get_conn()
         cursor = conn.cursor()
-        sql = 'select sheet_id, sheet_name, owner, sheet_img, play_times, info, thumbs_up_num, follow_num from vsongsheet order by play_times desc'
+        sql = 'select sheet_id, sheet_name, owner, sheet_img, play_times, info, thumbs_up_num, follow_num from vsongsheet order by play_times desc limit ' + str(
+            limit)
         cursor.execute(sql)
         rows = cursor.fetchall()
         song_sheets = []
@@ -228,7 +229,7 @@ class SongSheet(object):
                     'code': -1,
                     'errMsg': '歌单不存在'
                 })
-            if str(rows[0][0]) != user_id:
+            if int(rows[0][0]) != user_id:
                 return jsonify({
                     'code': -1,
                     'errMsg': '歌单属于userid: ' + str(rows[0][0])
@@ -265,7 +266,7 @@ class SongSheet(object):
                     'code': -1,
                     'errMsg': '歌单不存在'
                 })
-            if str(rows[0][0]) != user_id:
+            if int(rows[0][0]) != user_id:
                 return jsonify({
                     'code': -1,
                     'errMsg': '歌单属于userid: ' + str(rows[0][0])

@@ -58,7 +58,10 @@ def all_sheets():
     user_id = session.get("user_id")
     if user_id is None:
         user_id = 0
-    return SongSheet.sheets_to_jsonify(user_id, SongSheet.query_all())
+    limit = request.form.get('limit')
+    if limit is None:
+        limit = 50
+    return SongSheet.sheets_to_jsonify(user_id, SongSheet.query_all(limit))
 
 
 # 读取主页排前十歌单信息
@@ -239,8 +242,6 @@ def sheet_delete_song():
             'errMsg': '缺少参数song_id'
         })
     return SongSheet.sheet_delete_song(sheet_id, song_id, user_id)
-
-
 
 
 # 读取所有歌曲信息
