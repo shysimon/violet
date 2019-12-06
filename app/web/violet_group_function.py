@@ -170,7 +170,7 @@ class Group(object):
         :param group_id: 要删除的圈子的id
         :return:返回json格式数据，格式如下：
         { 'code':函数执行结果（0为成功，-1为失败）
-          'data':[] (返回空列表)
+          'data':[] (返回空列表)aa
         }
         '''
         cursor, conn = get_connection()
