@@ -99,6 +99,10 @@ def add_group():
             'code': -1,
             'errMsg': '缺少参数info'
         })
+    if thumbs_up_num is None:
+        thumbs_up_num = 0
+    if follow_num is None:
+        follow_num = 1
     return Group.add_group(user_id, group_name, info, thumbs_up_num=thumbs_up_num, follow_num=follow_num)
 
 
