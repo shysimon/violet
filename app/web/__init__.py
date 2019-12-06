@@ -10,3 +10,4 @@ from app.web import app_comment
 from app.web import app_group_post
 from app.web import app_thumbs
 from app.web import app_user_recommend
+from app.web import app_group_recommend

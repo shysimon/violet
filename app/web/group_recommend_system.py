@@ -1,5 +1,6 @@
 import pymysql
 import traceback
+import numpy as np
 from app.web.violet_group_function import Group
 from flask import jsonify
 
@@ -92,7 +93,6 @@ class GroupRecommendSystem(object):
 
         return user_items
 
-
     @staticmethod
     def generate_user_item_matrix(user_items):
         '''
@@ -142,7 +142,6 @@ class GroupRecommendSystem(object):
 
         return indexes, matrix
 
-
     @staticmethod
     def compute_common_num(row1, row2):
         '''
@@ -159,7 +158,6 @@ class GroupRecommendSystem(object):
                 cnt += 1
 
         return cnt
-
 
     @staticmethod
     def compute_cosine_similarity(row1, row2):
@@ -209,7 +207,6 @@ class GroupRecommendSystem(object):
         matrix = np.insert(matrix, matrix.shape[0], values=user_vect, axis=0)
 
         return indexes, matrix
-
 
     def user_based_recommend(self, user_id, indexes, user_item_matrix, max_recommend_num=10):
         '''
@@ -368,7 +365,7 @@ class GroupRecommendSystem(object):
 
     def recommend_group(self, user_id, beta=0.6):
         '''
-       对用户进行用户推荐
+       对用户进行圈子推荐
         :param user_id: 被推荐用户的id
         :param beta: 权重系数，取值应当在(0, 1] -> 反应user-based推荐与item-based推荐所占比
                     计算方法为β* item-based + (1-β) * user-based
