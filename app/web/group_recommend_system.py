@@ -20,22 +20,24 @@ def get_connection():
     return conn
 
 
-def user_to_data(user_id, sim):
+def group_to_data(user_id, sim):
     conn = get_connection()
     cursor = conn.cursor()
 
-    sql = 'select user_nickname, password, gender, birthday, motto, thumbs_up_num, user_type, info, email from vuser where user_id = %s'
+    sql = 'select vgroup.group_id,group_name, create_time,info,thumbs_up_num,follow_num,vgroup.user_id ' \
+                  'from user_group, vgroup ' \
+                  'where user_group.user_id = %s ' \
+                  'and vgroup.group_id = user_group.group_id'
     cursor.execute(sql, [user_id])
-    row = cursor.fetchall()[0]
-
-    data = {'user_id': user_id, 'user_nickname': row[0], 'password': row[1], 'gender': row[2], 'birthday': row[3],
-            'motto': row[4], 'thumbs_up_num': row[5], 'user_type': row[6], 'info': row[7], 'email': row[8],
-            'similarity': sim}
-
+    row = cursor.fetchone()
+    if row is None:
+        return
+    data = {'group_id': row[0], 'group_name': row[1], 'create_time': row[2], 'info': row[3],
+            'thumbs_up_num': row[4],'follow_num': row[5], 'user_id': row[6], 'similarity': sim}
     return data
 
 
-def user_to_jsonify(users):
+def group_to_jsonify(users):
     json_data = {}
     try:
         json_data['code'] = 0
@@ -45,8 +47,10 @@ def user_to_jsonify(users):
             if user_id == 0:
                 continue
             sim = user[1]
-            user_data = user_to_data(user_id, sim)
-            json_data['data'].append(user_data)
+            group_data = group_to_data(user_id, sim)
+            if group_data is None:
+                continue
+            json_data['data'].append(group_data)
         return jsonify(json_data)
     except Exception as e:
         print(e.args)
@@ -78,7 +82,7 @@ class GroupRecommendSystem(object):
             # sql = 'select item_type, item_id from vthumbsup where user_id = %s'
             sql = 'select vgroup.group_id,group_name, create_time,info,thumbs_up_num,follow_num,vgroup.user_id ' \
                   'from user_group, vgroup ' \
-                  'where user_group.user_id = 2 ' \
+                  'where user_group.user_id = %s ' \
                   'and vgroup.group_id = user_group.group_id'
             cursor.execute(sql, [user_id])
             rows = cursor.fetchall()
@@ -113,7 +117,7 @@ class GroupRecommendSystem(object):
             user_idx += 1
 
             for item in list_items:
-                composite_key = str(item.item_type) + str(item.item_id)  # 以item_type和item_id组合成一个复合键
+                composite_key = str(item.group_id)  # 以item_type和item_id组合成一个复合键
                 if composite_key not in item_to_idx.keys():  # 判重
                     idx_to_item[item_idx] = composite_key
                     item_to_idx[composite_key] = item_idx
@@ -369,7 +373,7 @@ class GroupRecommendSystem(object):
         :param user_id: 被推荐用户的id
         :param beta: 权重系数，取值应当在(0, 1] -> 反应user-based推荐与item-based推荐所占比
                     计算方法为β* item-based + (1-β) * user-based
-        :return:aa
+        :return:
         '''
         user_items = self.load_liked_items()
         indexes, user_item_matrix = self.generate_user_item_matrix(user_items)
