@@ -369,7 +369,7 @@ class GroupRecommendSystem(object):
         :param user_id: 被推荐用户的id
         :param beta: 权重系数，取值应当在(0, 1] -> 反应user-based推荐与item-based推荐所占比
                     计算方法为β* item-based + (1-β) * user-based
-        :return:
+        :return:aa
         '''
         user_items = self.load_liked_items()
         indexes, user_item_matrix = self.generate_user_item_matrix(user_items)
