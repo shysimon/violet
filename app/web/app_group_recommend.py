@@ -16,7 +16,7 @@ def recommend_group():
     user_id = session.get('user_id')
     beta = request.form.get('beta')
     '''
-       user_id = 1
+       user_id = 1;
        beta = None
        测试结果：
        {

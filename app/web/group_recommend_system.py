@@ -7,7 +7,7 @@ from flask import jsonify
 
 def get_connection():
     '''
-    获取数据库连接
+    获取数据库连接;
     :return:
     '''
     user = 'violet'
