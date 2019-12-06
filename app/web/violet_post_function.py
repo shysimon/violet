@@ -3,6 +3,7 @@ from datetime import datetime
 from flask import jsonify
 import traceback
 
+from app.web.violet_comment_functions import Comment
 from app.lib.time_output import my_time_to_string
 from app.web.violet_thumbs_functions import Thumbs
 
@@ -71,6 +72,38 @@ class Post(object):
             json_data['data'] = []
             for post in result:
                 json_data['data'].append(Post.result_to_data(post, cursor, user_id))
+            json_data['code'] = 0
+            print('success!')
+            return jsonify(json_data)
+        except BaseException as e:
+            conn.rollback()
+            json_data['data'] = e.args
+            print(e.args)
+            print(traceback.format_exc())
+            return jsonify(json_data)
+        finally:
+            conn.commit()
+            conn.close()
+            cursor.close()
+
+    @staticmethod
+    def load_post_by_id(post_id, user_id):
+        cursor, conn = get_connection()
+        json_data = dict()
+        json_data['code'] = -1
+        json_data['data'] = []
+        try:
+            sql = 'select * from violet.vpost where post_id = %s'
+            cursor.execute(sql, post_id)
+            result = cursor.fetchall()
+            json_data['data'] = []
+            for post in result:
+                json_data['data'].append(Post.result_to_data(post, cursor, user_id))
+
+            comments = Comment.load_comment(user_id, 4, post_id)
+            json_data['comments']=[]
+            for comment in comments:
+                json_data['comments'].append(Comment.to_data(comment))
             json_data['code'] = 0
             print('success!')
             return jsonify(json_data)
@@ -298,6 +331,10 @@ class Post(object):
         rows = cursor.fetchall()
         count = rows[0]['count(*)']
         post['comment_count'] = count
+
+        sql = 'select group_name from vgroup where group_id = %s'
+        cursor.execute(sql, post['group_id'])
+        post['group_name'] = cursor.fetchall()[0]['group_name']
 
         post_id = post['post_id']
         is_liked = Thumbs.query_like(user_id, 4, post_id)
