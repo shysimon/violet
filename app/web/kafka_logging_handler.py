@@ -8,7 +8,6 @@ from numpy import unicode
 context = ssl.create_default_context()
 context = ssl.SSLContext(ssl.PROTOCOL_SSLv23)
 context.verify_mode = ssl.CERT_REQUIRED
-
 context.load_verify_locations("app/web/ca-cert")
 
 

@@ -5,14 +5,6 @@ from app.web.write_log import send_log
 from . import web
 
 
-# app = Flask(__name__)
-
-
-# @web.route('/')
-# def hello_world():
-#     return 'Hello World!'
-
-
 @web.route('/v1/group/load_group', methods=['POST', 'GET'])
 def load_group():
     user_id = session.get('user_id')

@@ -5,11 +5,6 @@ import requests
 
 from app.web.violet_songsheet_functions import SongSheet, Song
 from app.web.write_log import send_log
-# app = Flask(__name__)
-
-# @web.route('/')
-# def hello_world():
-#     return 'Hello World!'
 
 
 '''

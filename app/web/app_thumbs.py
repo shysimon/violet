@@ -3,7 +3,6 @@ from app.web.violet_thumbs_functions import Thumbs
 from . import web
 from app.web.write_log import send_log
 
-# app = Flask(__name__)
 
 
 @web.route('/v1/thumbs/like', methods=['POST'])

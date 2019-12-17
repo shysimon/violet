@@ -3,14 +3,6 @@ from app.web.group_recommend_system import GroupRecommendSystem, group_to_jsonif
 from . import web
 
 
-# app = Flask(__name__)
-
-
-# @web.route('/')
-# def hello_world():
-#     return 'Hello World!'
-
-
 @web.route('/v1/recommend/group', methods=['POST', 'GET'])
 def recommend_group():
     user_id = session.get('user_id')

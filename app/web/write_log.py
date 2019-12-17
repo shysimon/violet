@@ -1,6 +1,7 @@
 from app.web.kafka_logging_handler import KafkaLoggingHandler
 import logging
 
+
 def send_log(value='testvalue'):
     # 获取handler实例
     logger = logging.getLogger(__name__)

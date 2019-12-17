@@ -3,7 +3,6 @@ from app.web.violet_zone_functions import Zone
 from . import web
 from app.web.write_log import send_log
 
-# app = Flask(__name__)
 
 
 @web.route('/v1/zone/load_zone', methods=['POST'])

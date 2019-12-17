@@ -1,8 +1,7 @@
 import ssl
-import socket
 from kafka import KafkaConsumer
-from kafka.errors import KafkaError
 import redis
+
 
 def save_to_redis(key='test'):
     context = ssl.create_default_context()
