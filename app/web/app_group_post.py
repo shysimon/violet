@@ -1,6 +1,7 @@
 from flask import Flask, jsonify, request, session
 from app.web.violet_group_function import Group
 from app.web.violet_post_function import Post
+from app.web.write_log import send_log
 from . import web
 
 
@@ -17,6 +18,7 @@ def load_group():
     user_id = session.get('user_id')
     if user_id is None:
         user_id = 0
+    send_log('/v1/group/load_group')
     return Group.load_group(user_id)
 
 
@@ -25,6 +27,7 @@ def index_groups():
     user_id = session.get('user_id')
     if user_id is None:
         user_id = 0
+    send_log('/v1/group/index_groups')
     return Group.load_group_top5(user_id)
 
 
@@ -39,6 +42,7 @@ def load_group_by_id():
             'code': '-1',
             'errMsg': '缺少参数group_id'
         })
+    send_log('/v1/group/load_group_by_id')
     return Group.load_group_by_id(group_id, user_id)
 
 
@@ -59,6 +63,7 @@ def search_group():
             'code': '-1',
             'errMsg': '缺少参数keyword'
         })
+    send_log('/v1/group/search_group')
     return Group.search_group(keyword, user_id)
 
 
@@ -103,6 +108,7 @@ def add_group():
         thumbs_up_num = 0
     if follow_num is None:
         follow_num = 1
+    send_log('/v1/group/add_group')
     return Group.add_group(user_id, group_name, info, thumbs_up_num=thumbs_up_num, follow_num=follow_num)
 
 
@@ -129,6 +135,7 @@ def delete_group():
             'code': -1,
             'errMsg': '缺少参数group_id'
         })
+    send_log('/v1/group/delete_group')
     return Group.delete_group(group_id, user_id)
 
 
@@ -162,6 +169,7 @@ def invite_friend():
             'code': -1,
             'errMsg': '缺少参数group_id'
         })
+    send_log('/v1/group/invite_friend')
     return Group.invite_user(friend_id, group_id)
 
 
@@ -185,6 +193,7 @@ def load_post():
             'code': -1,
             'errMsg': '缺少参数group_id'
         })
+    send_log('/v1/post/load_post')
     return Post.load_post(group_id, user_id)
 
 @web.route('/v1/post/load_post_by_id', methods=['POST', 'GET'])
@@ -207,6 +216,7 @@ def load_post_by_id():
             'code': -1,
             'errMsg': '缺少参数group_id'
         })
+    send_log('/v1/post/load_post')
     return Post.load_post_by_id(post_id, user_id)
 
 @web.route('/v1/post/index_posts', methods=['POST', 'GET'])
@@ -214,6 +224,7 @@ def index_posts():
     user_id = session.get('user_id')
     if user_id is None:
         user_id = 0
+    send_log('/v1/post/index_posts')
     return Post.load_post_top5(user_id)
 
 
@@ -260,6 +271,7 @@ def add_post():
             'code': -1,
             'errMsg': '缺少参数content'
         })
+    send_log('/v1/post/add_post')
     return Post.add_post(group_id, user_id, post_title, content, thumbs_up_num)
 
 
@@ -285,6 +297,7 @@ def delete_post():
             'code': -1,
             'errMsg': '缺少参数post_id'
         })
+    send_log('/v1/post/delete_post')
     return Post.delete_post(post_id)
 
 
@@ -318,6 +331,7 @@ def modify_post():
             'code': -1,
             'errMsg': '缺少参数new_content'
         })
+    send_log('/v1/post/modify_post')
     return Post.modify_post(post_id, new_content)
 
 
@@ -352,7 +366,7 @@ def search_post():
             'code': -1,
             'errMsg': '缺少参数group_id'
         })
-
+    send_log('/v1/post/search_post')
     return Post.search_post(keyword, group_id, user_id)
 
 # if __name__ == '__main__':

@@ -4,7 +4,7 @@ from . import web
 import requests
 
 from app.web.violet_songsheet_functions import SongSheet, Song
-
+from app.web.write_log import send_log
 # app = Flask(__name__)
 
 # @web.route('/')
@@ -61,6 +61,7 @@ def all_sheets():
     limit = request.form.get('limit')
     if limit is None:
         limit = 50
+    send_log('/v1/sheet/all_sheets')
     return SongSheet.sheets_to_jsonify(user_id, SongSheet.query_all(limit))
 
 
@@ -71,6 +72,7 @@ def index_sheets():
     user_id = session.get("user_id")
     if user_id is None:
         user_id = 0
+    send_log('/v1/sheet/index_sheets')
     return SongSheet.sheets_to_jsonify(user_id, SongSheet.query_top10())
 
 
@@ -90,6 +92,7 @@ def sheets_by_id():
             'code': -1,
             'errMsg': '缺少参数sheet_id'
         })
+    send_log('/v1/sheet/sheets_by_id')
     return SongSheet.sheets_details_to_jsonify(user_id, SongSheet.query_by_id(sheet_id),
                                                Song.query_by_sheet(sheet_id))
 
@@ -105,6 +108,7 @@ def sheets_by_owner():
     owner = request.form.get('user_id')
     if owner is None:
         owner = 0
+    send_log('/v1/sheet/sheets_by_owner')
     return SongSheet.sheets_to_jsonify(user_id, SongSheet.query_by_owner(owner))
 
 
@@ -122,6 +126,7 @@ def sheets_by_name():
         name = request.args.get('name')
     if name is None:
         return all_sheets()
+    send_log('/v1/sheet/sheets_by_name')
     return SongSheet.sheets_to_jsonify(user_id, SongSheet.query_by_name(name))
 
 
@@ -136,6 +141,7 @@ def sheets_by_user():
     q_user_id = request.form.get('user_id')
     if q_user_id is None:
         q_user_id = 0
+    send_log('/v1/sheet/sheets_by_user')
     return SongSheet.sheets_to_jsonify(user_id, SongSheet.query_by_user(q_user_id))
 
 
@@ -160,6 +166,7 @@ def create_sheet():
             'code': -1,
             'errMsg': '缺少参数sheet_name'
         })
+    send_log('/v1/sheet/create_sheet')
     return SongSheet.create_sheet(sheet_name, user_id, sheet_img)
 
 
@@ -182,6 +189,7 @@ def delete_sheet():
             'code': -1,
             'errMsg': '缺少参数sheet_id'
         })
+    send_log('/v1/sheet/delete_sheet')
     return SongSheet.delete_sheet(sheet_id, user_id)
 
 
@@ -211,6 +219,7 @@ def sheet_add_song():
             'code': -1,
             'errMsg': '缺少参数song_id'
         })
+    send_log('/v1/sheet/sheet_add_song')
     return SongSheet.sheet_add_song(sheet_id, song_id, user_id)
 
 
@@ -241,6 +250,7 @@ def sheet_delete_song():
             'code': -1,
             'errMsg': '缺少参数song_id'
         })
+    send_log('/v1/sheet/sheet_delete_song')
     return SongSheet.sheet_delete_song(sheet_id, song_id, user_id)
 
 
@@ -251,6 +261,7 @@ def all_songs():
     user_id = session.get("user_id")
     if user_id is None:
         user_id = 0
+    send_log('/v1/song/all_songs')
     return Song.songs_to_jsonify(user_id, Song.query_all())
 
 
@@ -274,6 +285,7 @@ def songs_by_name():
         res = requests.get(url, params)
         for i in res.json()['result']['songs']:
             Song.add_from_music163(i)
+    send_log('/v1/song/songs_by_name')
     return Song.songs_to_jsonify(user_id, Song.query_by_name(name))
 
 
@@ -291,6 +303,7 @@ def songs_by_singer():
         singer_id = request.args.get('singer_id')
     if singer_id is None:
         return all_songs()
+    send_log('/v1/song/songs_by_singer')
     return Song.songs_to_jsonify(user_id, Song.query_by_singer(singer_id))
 
 
@@ -308,6 +321,7 @@ def songs_by_sheet():
         sheet_id = request.args.get('sheet_id')
     if sheet_id is None:
         return all_songs()
+    send_log('/v1/song/songs_by_sheet')
     return Song.songs_to_jsonify(user_id, Song.query_by_sheet(sheet_id))
 
 
@@ -319,17 +333,20 @@ def get_music163_url():
     if request.method == 'GET':
         music163_id = request.args.get('music163_id')
     if music163_id is None:
+        send_log('/v1/song/geturl')
         return jsonify({
             'code': -1,
             'errMsg': '缺少参数music163_id'
         })
     song_id = request.form.get('song_id')
     if song_id is None:
+        send_log('/v1/song/geturl')
         return jsonify({
             'code': -1,
             'errMsg': '缺少参数song_id'
         })
     Song.play(song_id)
+    send_log('/v1/song/geturl')
     return jsonify({
         'code': 0,
         'url': get_url_from_music163(music163_id),

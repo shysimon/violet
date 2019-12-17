@@ -1,7 +1,7 @@
 from flask import Flask, jsonify, session, request
 from app.web.violet_zone_functions import Zone
 from . import web
-
+from app.web.write_log import send_log
 
 # app = Flask(__name__)
 
@@ -57,7 +57,7 @@ def load_zone():
             'code': -1,
             'errMsg': '缺少参数user_id'
         })
-
+    send_log('/v1/zone/load_zone')
     return Zone.zones_to_jsonify(Zone.load_zone(user_id))
 
 
@@ -66,7 +66,7 @@ def index_zones():
     user_id = session.get('user_id')
     if user_id is None:
         user_id = 0
-
+    send_log('/v1/zone/index_zones')
     return Zone.zones_to_jsonify(Zone.load_zone_top3(user_id))
 
 
@@ -108,7 +108,7 @@ def add_zone():
             'code': -1,
             'errMsg': '缺少参数item_id'
         })
-
+    send_log('/v1/zone/add_zone')
     return Zone.add_zone(user_id, content, item_type, item_id)
 
 
@@ -137,7 +137,7 @@ def delete_zone():
             'code': -1,
             'errMsg': '缺少参数zone_id'
         })
-
+    send_log('/v1/zone/delete_zone')
     return Zone.delete_zone(user_id, zone_id)
 
 
@@ -173,7 +173,7 @@ def modify_zone():
             'code': -1,
             'errMsg': '缺少参数content'
         })
-
+    send_log('/v1/zone/modify_zone')
     return Zone.modify_zone(user_id, zone_id, content)
 
 # if __name__ == '__main__':

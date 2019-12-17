@@ -6,6 +6,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from app.forms.auth import RegisterForm, LoginForm, EmailForm, ResetPasswordForm
 from app.lib.email import send_mail
 from app.model.user import User
+from app.web.write_log import send_log
 from . import web
 
 
@@ -37,6 +38,7 @@ def register():
                 "errMsg": e.args
             })
         finally:
+            send_log('/v1/auth/register')
             # 关闭数据库连接
             db.close()
         return jsonify({
@@ -89,6 +91,7 @@ def login():
             })
         finally:
             # 关闭数据库连接
+            send_log('/v1/auth/login')
             db.close()
     else:
         return jsonify({
@@ -104,20 +107,24 @@ def forget_password_request():
         account_email = form.email.data
         user = User.getUserByEmail(account_email)
         if user is not None:
+            send_log('/v1/auth/reset/password')
             send_mail(account_email, "重置你的密码", 'email/reset_password.html', user=user, token=user.generate_token())
             return jsonify({
                 "code": 200
             })
         else:
+            send_log('/v1/auth/reset/password')
             return jsonify({
                 "code": -1,
                 "errMsg": "邮箱不存在"
             })
     else:
+        send_log('/v1/auth/reset/password')
         return jsonify({
             "code": -1,
             "errMsg": form.errors
         })
+
 
 
 @web.route('/v1/auth/reset/password/<token>', methods=['POST'])
@@ -126,10 +133,12 @@ def forget_password(token):
     if form.validate():
         success = User.reset_password(token, form.password1.data)
         if success:
+            send_log('/v1/auth/reset/password/')
             return jsonify({
                 "code": 200
             })
         else:
+            send_log('/v1/auth/reset/password/')
             return jsonify({
                 "code": -1,
                 "errMsg": "密码修改失败"
@@ -140,6 +149,7 @@ def forget_password(token):
 # @login_required
 def logout():
     logout_user()
+    send_log('/v1/auth/logout')
     return jsonify({
         "code": 200
     })
