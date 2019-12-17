@@ -10,7 +10,6 @@ def save_to_redis(key='test'):
     # context.check_hostname = True
     context.load_verify_locations("ca-cert")
 
-
     consumer = KafkaConsumer(bootstrap_servers='118.31.64.108:9093',
                     group_id='group1',
                     sasl_mechanism="PLAIN",

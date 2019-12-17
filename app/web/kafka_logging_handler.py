@@ -51,5 +51,6 @@ class KafkaLoggingHandler(logging.Handler):
     def close(self):
         # self.producer.stop()
         logging.Handler.close(self)
+        
 
 

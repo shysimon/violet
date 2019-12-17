@@ -1,4 +1,4 @@
-from flask import Flask, jsonify, session, request
+from flask import jsonify, session, request
 from app.web.violet_thumbs_functions import Thumbs
 from . import web
 from app.web.write_log import send_log

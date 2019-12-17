@@ -1,5 +1,4 @@
 from flask import Flask, request, jsonify, session
-from flask_login import login_required
 from . import web
 import requests
 

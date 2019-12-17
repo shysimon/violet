@@ -1,4 +1,4 @@
-from flask import Flask, jsonify, request, session
+from flask import jsonify, request, session
 from app.web.violet_group_function import Group
 from app.web.violet_post_function import Post
 from app.web.write_log import send_log
