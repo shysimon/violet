@@ -1,9 +1,8 @@
-from flask import Flask, jsonify, session, request
+from flask import jsonify, session, request
 from app.web.violet_thumbs_functions import Thumbs
 from . import web
+from app.web.write_log import send_log
 
-
-# app = Flask(__name__)
 
 
 @web.route('/v1/thumbs/like', methods=['POST'])
@@ -37,7 +36,7 @@ def like():
             'code': -1,
             'errMsg': '缺少参数item_id'
         })
-
+    send_log('/v1/thumbs/like')
     return Thumbs.like(user_id, item_type, item_id)
 
 
@@ -72,7 +71,7 @@ def dislike():
             'code': -1,
             'errMsg': '缺少参数item_id'
         })
-
+    send_log('/v1/thumbs/dislike')
     return Thumbs.dislike(user_id, item_type, item_id)
 
 # if __name__ == '__main__':

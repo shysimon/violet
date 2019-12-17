@@ -2,7 +2,6 @@ from flask import Flask, jsonify, session, request
 from app.web.user_recommend_system import UserRecommendSystem, user_to_jsonify
 from . import web
 
-# app = Flask(__name__)
 
 
 @web.route('/v1/recommend/user', methods=['POST'])

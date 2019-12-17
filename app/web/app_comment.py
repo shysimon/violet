@@ -1,8 +1,7 @@
-from flask import Flask, jsonify, session, request
+from flask import jsonify, session, request
 from app.web.violet_comment_functions import Comment
 from . import web
-
-# app = Flask(__name__)
+from app.web.write_log import send_log
 
 
 @web.route('/v1/comment/load_comment', methods=['POST'])
@@ -58,7 +57,7 @@ def load_comment():
             'code': -1,
             'errMsg': '缺少参数item_id'
         })
-
+    send_log('/v1/comment/load_comment')
     return Comment.comments_to_jsonify(Comment.load_comment(user_id, item_type, item_id))
 
 
@@ -99,7 +98,7 @@ def add_comment():
             'code': -1,
             'errMsg': '缺少参数content'
         })
-
+    send_log('/v1/comment/add_comment')
     return Comment.add_comment(user_id, item_type, item_id, content)
 
 
@@ -126,7 +125,7 @@ def delete_comment():
             'code': -1,
             'errMsg': '缺少参数comment_id'
         })
-
+    send_log('/v1/comment/delete_comment')
     return Comment.delete_comment(user_id, comment_id)
 
 
@@ -160,7 +159,7 @@ def modify_comment():
             'code': -1,
             'errMsg': '缺少参数content'
         })
-
+    send_log('/v1/comment/modify_comment')
     return Comment.modify_comment(user_id, comment_id, content)
 
 
